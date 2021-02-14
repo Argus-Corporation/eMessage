@@ -86,7 +86,7 @@ public class Config {
 				if(confManager != null) {
 					int result = confManager.apply();
 					
-					if(result == -1) {
+					if(result == ConfigManager.ERROR_APPLY) {
 						new ThreadManager("Error Config").start(getErrorRun(e));
 						if(e != null)
 							ThreadManager.stop(Thread.currentThread());

@@ -17,7 +17,7 @@ public class TextFieldName extends TextField {
 	public TextFieldName(int size) {
 		super(size);
 		addFocusListener(getDefaultFocusListener());
-		addChaneListener(getDefaultChangeListener());
+		addChangeListener(getDefaultChangeListener());
 	}
 	
 	@Override

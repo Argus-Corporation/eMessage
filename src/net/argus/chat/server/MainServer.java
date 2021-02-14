@@ -2,6 +2,7 @@ package net.argus.chat.server;
 
 import java.io.IOException;
 
+import net.argus.chat.client.ClientConfig;
 import net.argus.plugin.InitializationPlugin;
 import net.argus.plugin.PluginEvent;
 import net.argus.plugin.PluginRegister;
@@ -25,7 +26,7 @@ public class MainServer {
 		info();
 		
 		serv = new Server(MAX, PORT);
-		servCrypt = new Server(MAX, PORT + 1, new Key("key"));
+		servCrypt = new Server(MAX, PORT + 1, new Key(ClientConfig.getDefaultKey()));
 		
 		serv.addClostListener(getServerCloseListener());
 		servCrypt.addClostListener(getServerCryptCloseListener());
@@ -75,6 +76,7 @@ public class MainServer {
 		Thread.currentThread().setName("SERVER");
 		
 		PluginRegister.preInit(new PluginEvent(MainServer.class));
+		
 		MainServer.init();
 	}
 

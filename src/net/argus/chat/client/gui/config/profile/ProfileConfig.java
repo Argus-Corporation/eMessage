@@ -104,7 +104,6 @@ public class ProfileConfig extends ConfigManager {
 	public Panel getButtonPanel() {
 		Panel pan = new Panel();
 		
-		
 		remove = new Button("remove");
 		create = new Button("create");
 		apply = new Button("apply");
@@ -151,8 +150,10 @@ public class ProfileConfig extends ConfigManager {
 	
 	private ActionListener getCreateActionListener() {
 		return e -> {
-			listModel.addElement(new Profile("", ""));
-			list.setSelectedIndex(listModel.getSize() - 1);
+			if(list.getSelectedIndex() < 0 || (!ip.isError() && !name.isError())) {
+				listModel.addElement(new Profile("", ""));
+				list.setSelectedIndex(listModel.getSize() - 1);
+			}
 		};
 	}
 	
@@ -208,6 +209,7 @@ public class ProfileConfig extends ConfigManager {
 				nameText.setName(name.getText());
 				list.updateUI();
 				apply.setEnabled(true);
+				
 			}
 		};
 	}
@@ -261,6 +263,9 @@ public class ProfileConfig extends ConfigManager {
 		if(!ip.isError() && !name.isError()) {
 			int index = old?list.getOldSelectedIndex():list.getSelectedIndex();
 			
+			if(index < 0)
+				index = 0;
+				
 			if(index > -1 && index < (HostInfo.getProfileConfig().getNumberLine() / 2))
 				change(index);
 			else if(index > -1)
@@ -272,11 +277,11 @@ public class ProfileConfig extends ConfigManager {
 			
 			apply.setEnabled(false);
 		}else
-			return -1;
+			return ERROR_APPLY;
 		
 		old = false;
 		
-		return 0;
+		return VALID_APPLY;
 	}
 	
 }

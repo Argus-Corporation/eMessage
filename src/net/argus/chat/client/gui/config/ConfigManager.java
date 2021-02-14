@@ -13,6 +13,9 @@ public abstract class ConfigManager {
 	public static final ConfigManager PORT = new PortConfig();
 	public static final ConfigManager PROFIL = new ProfileConfig();
 	
+	public static final int VALID_APPLY = 0;
+	public static final int ERROR_APPLY = -1;
+	
 	protected int id;
 	
 	public ConfigManager(int id) {

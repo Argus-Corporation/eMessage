@@ -17,7 +17,7 @@ public class TextFieldIp extends TextField {
 	public TextFieldIp(int size) {
 		super(size);
 		addFocusListener(getDefaultFocusListener());
-		addChaneListener(getDefaultChangeListener());
+		addChangeListener(getDefaultChangeListener());
 	}
 	
 	@Override

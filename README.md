@@ -1,6 +1,9 @@
 # Chat
 
+version 1.2
 
-<a href="https://argus.alwaysdata.net/common/Client_SET-UP.jar">download client</a>
-</br>
-<a href="https://argus.alwaysdata.net/common/Server_SET-UP.jar">download server</a>
+---
+<li> <a herf="https://github.com/Argus-corporation/Chat">Chat</a>
+<li> <a herf="https://github.com/Argus-corporation/Cardinal-Plugin">Cardinal-Plugin</a>
+
+<li> <a href="https://argus.alwaysdata.net">website</a>
