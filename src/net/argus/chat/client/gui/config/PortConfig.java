@@ -91,7 +91,7 @@ public class PortConfig extends ConfigManager {
 			port.setText(Integer.toString(ClientConfig.getDefaultPort()));
 			portCrypt.setText(Integer.toString(ClientConfig.getDefaultPortCrypt()));
 			
-			getChangerKeyListener().keyTyped(null);
+			getChangerKeyListener().keyPressed(null);
 		};
 	}
 	
@@ -113,10 +113,10 @@ public class PortConfig extends ConfigManager {
 				GUIClient.config.setKey("port.crypt", portCrypt.getText());
 				
 				apply.setEnabled(false);
-				return 0;
+				return VALID_APPLY;
 			}catch(IOException e) {e.printStackTrace();}
 		
-		return -1;
+		return ERROR_APPLY;
 		
 	}
 	

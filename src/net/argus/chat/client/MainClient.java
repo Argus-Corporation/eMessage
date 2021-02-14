@@ -19,6 +19,8 @@ import net.argus.file.css.CSSEngine;
 import net.argus.gui.FrameListener;
 import net.argus.gui.TextField;
 import net.argus.plugin.InitializationPlugin;
+import net.argus.plugin.PluginEvent;
+import net.argus.plugin.PluginRegister;
 import net.argus.security.Key;
 import net.argus.system.CopyTemp;
 import net.argus.system.InitializationSplash;
@@ -49,11 +51,15 @@ public class MainClient {
 		
 		GUIClient.addFrameListener(getFrameListener());
 		
+		PluginRegister.init(new PluginEvent(MainClient.class));
+		
 		InitializationSplash.getSplash().exit();
 		while(!InitializationSplash.getSplash().isFinnish())
 			GUIClient.setVisible(false);
 			
 		GUIClient.setVisible(true);
+		
+		PluginRegister.postInit(new PluginEvent(MainClient.class));
 		
 	}
 	
@@ -169,8 +175,11 @@ public class MainClient {
 		copy.copy("*.gif");
 		
 		Debug.addBlackList(ThreadManager.THREAD_MANAGER);
-		
+
+		PluginRegister.preInit(new PluginEvent(MainClient.class));
+
 		MainClient.init();
+		
 	}
 	
 }

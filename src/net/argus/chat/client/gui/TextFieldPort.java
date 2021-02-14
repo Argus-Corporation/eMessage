@@ -17,7 +17,7 @@ public class TextFieldPort extends TextField {
 	public TextFieldPort(int size) {
 		super(size);
 		addFocusListener(getDefaultFocusListener());
-		addChaneListener(getDefaultChangeListener());
+		addChangeListener(getDefaultChangeListener());
 	}
 	
 	@Override
