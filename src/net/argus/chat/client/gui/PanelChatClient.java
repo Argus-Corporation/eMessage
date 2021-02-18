@@ -9,6 +9,9 @@ import java.net.UnknownHostException;
 import javax.swing.JEditorPane;
 import javax.swing.JScrollPane;
 
+import net.argus.chat.client.MainClient;
+import net.argus.chat.client.event.ChatEvent;
+import net.argus.chat.client.event.EventChat;
 import net.argus.gui.Button;
 import net.argus.gui.FrameListener;
 import net.argus.gui.Panel;
@@ -64,9 +67,15 @@ public class PanelChatClient {
 	
 	public void addMessage(String[] value) {
 		String pseudo = "";
+		String message = "";
 		if(value[0] != null && !value[0].equals(""))
 			pseudo = value[0] + ": ";
-		discussion.setText(discussion.getText() + pseudo + value[1] + "\n");
+		
+		message = pseudo + value[1];
+		discussion.setText(discussion.getText() + message + "\n");
+		
+		MainClient.getEvent().startEvent(EventChat.ADD_MESSAGE, new ChatEvent(value[0], value[1]));
+		
 	}
 	
 	public TextField getTextField() {return msg;}

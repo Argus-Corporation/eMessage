@@ -8,6 +8,7 @@ import java.net.URISyntaxException;
 import java.net.UnknownHostException;
 
 import net.argus.annotation.Cardinal;
+import net.argus.chat.Chat;
 import net.argus.chat.client.event.ChatEvent;
 import net.argus.chat.client.event.ChatListener;
 import net.argus.chat.client.event.EventChat;
@@ -41,6 +42,8 @@ public class MainClient {
 	private static EventChat event = new EventChat();
 	
 	public static void init() {
+		GUIClient.init();
+		
 		GUIClient.addFastAction(getFastActionListener());
 		GUIClient.addJoinAction(getJoinActionListener());
 		GUIClient.addLeaveAction(getLeaveActionListener());
@@ -76,7 +79,7 @@ public class MainClient {
 	}
 	
 	public static ActionListener getPreferenceActionListener() {
-		return (ActionEvent e) -> GUIClient.configFrame.show();
+		return (ActionEvent e) -> GUIClient.getConfigWindow().show();
 	}
 	
 	public static ActionListener getSendActionListener() {
@@ -91,7 +94,9 @@ public class MainClient {
 						client.sendPackage(new Package(new PackageBuilder(PackageType.COMMANDE.getId()).addValue("command", msg)));
 					else
 						client.sendPackage(new Package(new PackageBuilder(PackageType.MESSAGE.getId()).addValue("message", msg)));
-				
+					
+					event.startEvent(EventChat.SEND_MESSAGE, new ChatEvent(msg, null));
+					
 					GUIClient.addMessage(new String[] {"Vous", msg});
 				
 					field.copyData();
@@ -130,10 +135,10 @@ public class MainClient {
 				event.startEvent(EventChat.DISCONNECT, new ChatEvent(errmsg.equals("")?e.getObject().toString():errmsg, true));
 			}
 			public void disconnect(SocketEvent e) {
-				event.startEvent(EventChat.DISCONNECT, new ChatEvent("disconnected"));
+				event.startEvent(EventChat.DISCONNECT, new ChatEvent("disconnected", null));
 			}
 			public void connect(SocketEvent e) {
-				event.startEvent(EventChat.CONNECT, new ChatEvent("connected"));
+				event.startEvent(EventChat.CONNECT, new ChatEvent("connected", null));
 				
 				GUIClient.connect();
 			}
@@ -176,8 +181,8 @@ public class MainClient {
 		
 		Debug.addBlackList(ThreadManager.THREAD_MANAGER);
 
-		PluginRegister.preInit(new PluginEvent(MainClient.class));
-
+		PluginRegister.preInit(new PluginEvent(Chat.getInfo()));
+		
 		MainClient.init();
 		
 	}

@@ -7,7 +7,9 @@ import java.io.IOException;
 import net.argus.chat.client.gui.config.Config;
 import net.argus.file.FileManager;
 import net.argus.file.Properties;
-import net.argus.gui.Frame;
+import net.argus.file.cjson.CJSON;
+import net.argus.file.cjson.CJSONFile;
+import net.argus.file.cjson.CJSONPareser;
 import net.argus.gui.FrameListener;
 import net.argus.image.gif.GIF;
 import net.argus.image.gif.GIFLoader;
@@ -16,31 +18,29 @@ import net.argus.system.Temp;
 
 public class GUIClient {
 	
-	public static Properties config;
+	public static Properties config = new Properties("config", "bin");;
 	
 	public static ClientFrame frame;
 	
-	public static Config configFrame;
+	private static Config configWindow;
 	
 	public static MenuBarClient menuBar = new MenuBarClient();
 	public static PanelChatClient panChat = new PanelChatClient();
 	
-	public static String icon16 = FileManager.getPath("res/favicon16x16.png");
-	public static String icon32 = FileManager.getPath("res/favicon32x32.png");
+	public static final String icon16 = FileManager.getPath("res/favicon16x16.png");
+	public static final String icon32 = FileManager.getPath("res/favicon32x32.png");
 	
-	public static GIF load = GIFLoader.load(Temp.getTempDir() + "/res/gif/load.gif");
-	public static GIF valid = GIFLoader.load(Temp.getTempDir() + "/res/gif/valid.gif");
-	public static GIF invalid = GIFLoader.load(Temp.getTempDir() + "/res/gif/invalid.gif");
+	public static final GIF load = GIFLoader.load(Temp.getTempDir() + "/res/gif/load.gif");
+	public static final GIF valid = GIFLoader.load(Temp.getTempDir() + "/res/gif/valid.gif");
+	public static final GIF invalid = GIFLoader.load(Temp.getTempDir() + "/res/gif/invalid.gif");
 	
-	static {
-		config = new Properties("config", "bin");
-		
+	private static CJSON treeConfig = CJSONPareser.parse(new CJSONFile("config", "bin"));
+	
+	public static void init() {
 		Lang.setLang(config);
+		
+		frame = getFrame();
 
-		frame = new ClientFrame(config);
-		
-		configFrame = new Config();
-		
 		try {
 			frame.add(BorderLayout.NORTH, menuBar.getMenuBar());
 			frame.add(BorderLayout.CENTER, panChat.getChatPanel());
@@ -64,7 +64,21 @@ public class GUIClient {
 		menuBar.getEncrypt().setEnabled(true);
 	}
 	
-	public static Frame getFrame() {return frame;}
+	public static ClientFrame getFrame() {
+		if(frame == null)
+			frame = new ClientFrame(config);
+		
+		return frame;
+	}
+	
+	public static Config getConfigWindow() {
+		if(configWindow == null)
+			configWindow = new Config(treeConfig);
+			
+		return configWindow;
+	}
+	
+	public static CJSON getTreeConfig() {return treeConfig;}
 	
 	public static void addFrameListener(FrameListener listener) {frame.addFrameListener(listener);}
 	
@@ -77,6 +91,7 @@ public class GUIClient {
 	public static void addSendAction(ActionListener actionListener) {panChat.getSendButton().addActionListener(actionListener);}
 	
 	public static void addMessage(String[] value) {panChat.addMessage(value);}
+	
 	public static void setVisible(boolean v) {frame.setVisible(v);}
 	
 }

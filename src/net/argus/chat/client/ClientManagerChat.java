@@ -1,5 +1,7 @@
 package net.argus.chat.client;
 
+import net.argus.chat.client.event.ChatEvent;
+import net.argus.chat.client.event.EventChat;
 import net.argus.chat.client.gui.GUIClient;
 import net.argus.client.Client;
 import net.argus.client.ClientManager;
@@ -16,7 +18,9 @@ public class ClientManagerChat implements ClientManager {
 	}
 	
 	@Override
-	public void receivePackage(Package pack, ProcessClient thisObj) throws SecurityException {}
+	public void receivePackage(Package pack, ProcessClient thisObj) throws SecurityException {
+		MainClient.getEvent().startEvent(EventChat.RECEIVE_MESSAGE, new ChatEvent(pack));
+	}
 	
 	@Override
 	public void disconnected(String msg) throws SecurityException {
