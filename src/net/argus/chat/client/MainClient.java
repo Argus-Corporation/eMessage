@@ -14,10 +14,11 @@ import net.argus.chat.client.event.ChatListener;
 import net.argus.chat.client.event.EventChat;
 import net.argus.chat.client.gui.Connect;
 import net.argus.chat.client.gui.GUIClient;
+import net.argus.event.frame.FrameEvent;
+import net.argus.event.frame.FrameListener;
 import net.argus.event.socket.SocketEvent;
 import net.argus.event.socket.SocketListener;
 import net.argus.file.css.CSSEngine;
-import net.argus.gui.FrameListener;
 import net.argus.gui.TextField;
 import net.argus.plugin.InitializationPlugin;
 import net.argus.plugin.PluginEvent;
@@ -109,17 +110,17 @@ public class MainClient {
 	
 	public static FrameListener getFrameListener() {
 		return new FrameListener() {
-			public void frameResizing() {}
+			public void frameResizing(FrameEvent e) {}
 			@Override
 			@SuppressWarnings("deprecation")
-			public void frameClosing() {
+			public void frameClosing(FrameEvent e) {
 				if(client != null && client.isConnected()) {
 					client.sendPackage(new Package(new PackageBuilder(PackageType.LOG_OUT.getId()).addValue("message", "Frame Closing")));
 					
 					client.getProcessClient().stop();
 				}
 			}	
-			public void frameMinimalized() {}
+			public void frameMinimalized(FrameEvent e) {}
 		};
 	}
 	
@@ -170,7 +171,7 @@ public class MainClient {
 	}
 	
 	public static void main(String[] args) throws IOException, URISyntaxException {
-		InitializationSystem.initSystem(args, true, new InitializationSplash("res/logo.png", Display.getWidhtDisplay() - 50, 0));
+		InitializationSystem.initSystem(args, true, new InitializationSplash("res/logo.png", Display.getWidth() - 50, 0));
 		InitializationPlugin.register();
 		
 		Thread.currentThread().setName("client");

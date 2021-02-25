@@ -5,12 +5,12 @@ import java.awt.event.ActionListener;
 import java.io.IOException;
 
 import net.argus.chat.client.gui.config.Config;
+import net.argus.event.frame.FrameListener;
 import net.argus.file.FileManager;
 import net.argus.file.Properties;
 import net.argus.file.cjson.CJSON;
 import net.argus.file.cjson.CJSONFile;
 import net.argus.file.cjson.CJSONPareser;
-import net.argus.gui.FrameListener;
 import net.argus.image.gif.GIF;
 import net.argus.image.gif.GIFLoader;
 import net.argus.lang.Lang;

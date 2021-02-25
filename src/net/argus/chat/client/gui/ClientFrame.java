@@ -4,6 +4,7 @@ import java.awt.BorderLayout;
 
 import net.argus.file.Properties;
 import net.argus.gui.Frame;
+import net.argus.gui.animation.FrameAnimation;
 
 public class ClientFrame extends Frame {
 
@@ -22,6 +23,7 @@ public class ClientFrame extends Frame {
 		setMainLayout(new BorderLayout());
 		setLocationRelativeTo(null);
 		setIcon(GUIClient.icon16);
+		setAnimation(new FrameAnimation(this));
 	}
 
 }

@@ -6,21 +6,21 @@ import java.awt.event.ActionEvent;
 import java.io.IOException;
 import java.net.UnknownHostException;
 
-import javax.swing.JEditorPane;
 import javax.swing.JScrollPane;
 
 import net.argus.chat.client.MainClient;
 import net.argus.chat.client.event.ChatEvent;
 import net.argus.chat.client.event.EventChat;
+import net.argus.event.frame.FrameEvent;
+import net.argus.event.frame.FrameListener;
 import net.argus.gui.Button;
-import net.argus.gui.FrameListener;
+import net.argus.gui.EditorPane;
 import net.argus.gui.Panel;
 import net.argus.gui.TextField;
-import net.argus.gui.animation.FrameAnimation;
 
 public class PanelChatClient {
 	
-	private JEditorPane discussion;
+	private EditorPane discussion;
 	private TextField msg;
 	private Button send;
 	
@@ -30,7 +30,7 @@ public class PanelChatClient {
 		
 		Panel south = new Panel();
 		
-		discussion = new JEditorPane();
+		discussion = new EditorPane();
 		JScrollPane scrollPan = new JScrollPane(discussion);
 		discussion.setEditable(false);
 	
@@ -43,16 +43,14 @@ public class PanelChatClient {
 		
 		GUIClient.addFrameListener(new FrameListener() {
 			@Override
-			public void frameResizing() {
+			public void frameResizing(FrameEvent e) {
 				discussion.setBounds(0, 0, GUIClient.getFrame().getSize().width, 25);
 				
 				msg.setPreferredSize(new Dimension(GUIClient.getFrame().getSize().width - 200, 25));
 			}
 			@Override
-			public void frameClosing() {
-				new FrameAnimation(GUIClient.getFrame()).play();
-			}
-			public void frameMinimalized() {}
+			public void frameClosing(FrameEvent e) {}
+			public void frameMinimalized(FrameEvent e) {}
 		});
 		
 		msg.addActionListener((ActionEvent e) -> send.getActionListeners()[0].actionPerformed(e));	
