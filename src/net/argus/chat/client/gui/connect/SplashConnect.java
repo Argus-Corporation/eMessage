@@ -3,6 +3,8 @@ package net.argus.chat.client.gui.connect;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
 
 import javax.swing.BoxLayout;
 import javax.swing.UIManager;
@@ -37,6 +39,8 @@ public class SplashConnect extends DialogComponent {
 		
 		count = new CountDown(5);
 		count.addCountDownListener(getCountDownListener());
+		
+		addFocusListener(getFocusListener());
 		
 		setIcon(Icon.getIcon(GUIClient.icon16).getImage());
 		
@@ -172,6 +176,16 @@ public class SplashConnect extends DialogComponent {
 					GUIClient.frame.setEnabled(true);
 				}
 			}
+		};
+	}
+	
+	private FocusListener getFocusListener() {
+		return new FocusListener() {
+			public void focusLost(FocusEvent arg0) {
+				if(GUIClient.getFrame().isEnabled())
+					setVisible(false);
+			}
+			public void focusGained(FocusEvent arg0) {}
 		};
 	}
 	
