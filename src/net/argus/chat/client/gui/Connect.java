@@ -26,6 +26,7 @@ public class Connect extends Thread {
 	
 	@Override
 	public void run() {
+		Thread.currentThread().setName("Client-Connector");
 		if(ClientConfig.getPort() != -1) {
 			String host = null;
 			String pseudo = null;
@@ -48,8 +49,8 @@ public class Connect extends Thread {
 		}else {
 			int result = OptionPane.showMessageDialog(GUIClient.getFrame(), Lang.get("option.porterror.name"), UIManager.getString("Frame.titleErrorText"), JOptionPane.YES_NO_OPTION, JOptionPane.ERROR_MESSAGE);
 			if(result == JOptionPane.YES_OPTION) {
-				GUIClient.configFrame.show();
-				GUIClient.configFrame.setSelectedTree(PortConfig.ID);
+				GUIClient.getConfigWindow().show();
+				GUIClient.getConfigWindow().setSelectedTree(PortConfig.ID);
 			}
 				
 		}
@@ -63,8 +64,8 @@ public class Connect extends Thread {
 					UIManager.getString("Frame.titleErrorText"), JOptionPane.YES_NO_OPTION, JOptionPane.ERROR_MESSAGE);
 			
 			if(result == JOptionPane.YES_OPTION) {
-				GUIClient.configFrame.show();
-				GUIClient.configFrame.setSelectedTree(ProfileConfig.ID);
+				GUIClient.getConfigWindow().show();
+				GUIClient.getConfigWindow().setSelectedTree(ProfileConfig.ID);
 			}
 			
 			return null;

@@ -1,6 +1,6 @@
 package net.argus.chat.client;
 
-import net.argus.client.Client;
+import net.argus.net.client.Client;
 
 public interface ClientSendListener {
 	

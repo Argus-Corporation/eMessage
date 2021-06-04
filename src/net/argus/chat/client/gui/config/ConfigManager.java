@@ -7,7 +7,7 @@ import net.argus.chat.client.gui.config.profile.ProfileConfig;
 import net.argus.gui.Panel;
 
 public abstract class ConfigManager {
-	
+		
 	private static List<ConfigManager> configs = new ArrayList<ConfigManager>();
 	
 	public static final ConfigManager PORT = new PortConfig();

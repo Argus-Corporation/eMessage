@@ -11,8 +11,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 
 import net.argus.chat.client.gui.GUIClient;
-import net.argus.file.cjson.CJSONFile;
-import net.argus.file.cjson.CJSONPareser;
+import net.argus.file.cjson.CJSON;
 import net.argus.gui.OptionPane;
 import net.argus.gui.Panel;
 import net.argus.gui.tree.CardinalTree;
@@ -33,8 +32,8 @@ public class Config {
 	
 	private ConfigManager confManager;
 
-	public Config() {
-		configTree = getDefaultTree();
+	public Config(CJSON cjson) {
+		configTree = new Tree(new CardinalTree(cjson, "Preference"));
 		initComponent();
 	}
 
@@ -46,7 +45,7 @@ public class Config {
 		fen.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
 		fen.addWindowListener(getFrameListener());
 		
-		scrollPanTree = getTree();
+		scrollPanTree = getScrollTree();
 		optionPanel = new Panel();
 
 		configTree.addTreeListener(getTreeListener());
@@ -110,7 +109,7 @@ public class Config {
 		};
 	}
 	
-	private JScrollPane getTree() {
+	private JScrollPane getScrollTree() {
 		JScrollPane	scrollPanTree = new JScrollPane(configTree);
 		scrollPanTree.setMinimumSize(new Dimension(80, fen.getHeight()));
 		scrollPanTree.setPreferredSize(new Dimension(180, fen.getHeight()));
@@ -119,9 +118,8 @@ public class Config {
 		return scrollPanTree;
 	}
 
-	private Tree getDefaultTree() {
-		Tree tree = new Tree(new CardinalTree(CJSONPareser.parse(new CJSONFile("config", "bin")), "Preference"));
-		return tree;
+	public Tree getTree() {
+		return configTree;
 	}
 
 	public void show() {

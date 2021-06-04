@@ -18,7 +18,6 @@ import net.argus.gui.Panel;
 public class PortConfig extends ConfigManager {
 	
 	private TextFieldPort port;
-	private TextFieldPort portCrypt;
 	
 	private Button apply;
 	
@@ -51,19 +50,7 @@ public class PortConfig extends ConfigManager {
 		panPort.add(text);
 		panPort.add(port);
 		
-		//--------------------Crypt------------------------\\
-		Panel panPortCrypt = new Panel();
-		Label textCrypt = new Label("Port crypter", false);
-
-		
-		portCrypt = new TextFieldPort(10);
-		portCrypt.setText(GUIClient.config.getString("port.crypt"));
-		portCrypt.addKeyListener(getChangerKeyListener());
-		panPortCrypt.add(textCrypt);
-		panPortCrypt.add(portCrypt);
-		
 		pan.add(panPort);
-		pan.add(panPortCrypt);
 		
 		return pan;
 	}
@@ -89,7 +76,6 @@ public class PortConfig extends ConfigManager {
 	private ActionListener getDefaultActionListener() {
 		return (e) -> {
 			port.setText(Integer.toString(ClientConfig.getDefaultPort()));
-			portCrypt.setText(Integer.toString(ClientConfig.getDefaultPortCrypt()));
 			
 			getChangerKeyListener().keyPressed(null);
 		};
@@ -107,10 +93,9 @@ public class PortConfig extends ConfigManager {
 
 	@Override
 	public int apply() {
-		if(!port.isError() && !portCrypt.isError())
+		if(!port.isError())
 			try {
 				GUIClient.config.setKey("port", port.getText());
-				GUIClient.config.setKey("port.crypt", portCrypt.getText());
 				
 				apply.setEnabled(false);
 				return VALID_APPLY;

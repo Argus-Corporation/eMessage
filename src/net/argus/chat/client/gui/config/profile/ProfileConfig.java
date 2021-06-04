@@ -12,7 +12,7 @@ import javax.swing.DefaultComboBoxModel;
 
 import net.argus.chat.client.gui.GUIClient;
 import net.argus.chat.client.gui.HostInfo;
-import net.argus.chat.client.gui.TextFieldIp;
+import net.argus.chat.client.gui.TextFieldHost;
 import net.argus.chat.client.gui.TextFieldName;
 import net.argus.chat.client.gui.config.ConfigManager;
 import net.argus.file.Properties;
@@ -27,7 +27,7 @@ public class ProfileConfig extends ConfigManager {
 	private ComboBox<Profile> list;
 	
 	private TextFieldName name;
-	private TextFieldIp ip;
+	private TextFieldHost host;
 	
 	private Button remove, create, apply;
 	
@@ -81,17 +81,17 @@ public class ProfileConfig extends ConfigManager {
 		Panel center = new Panel();
 		
 		name = new TextFieldName(10);
-		ip = new TextFieldIp(10);
+		host = new TextFieldHost(10);
 		
 		main = new CheckBox("main");
 		
 		name.addKeyListener(getNameKeyListener());
-		ip.addKeyListener(getIpKeyListener());
+		host.addKeyListener(getIpKeyListener());
 		
 		main.addActionListener(getMainActionListener());
 		
 		north.add(name);
-		north.add(ip);
+		north.add(host);
 		
 		center.add(main);
 		
@@ -128,7 +128,7 @@ public class ProfileConfig extends ConfigManager {
 		String ip;
 		
 		listModel.removeAllElements();
-		for(int i = 0; i < profile.getNumberLine() / 2; i++) {
+		for(int i = 0; i < profile.countLine() / 2; i++) {
 			name = profile.getString("profile" + i + ".name"); 
 			ip = profile.getString("profile" + i + ".ip"); 
 			
@@ -150,7 +150,7 @@ public class ProfileConfig extends ConfigManager {
 	
 	private ActionListener getCreateActionListener() {
 		return e -> {
-			if(list.getSelectedIndex() < 0 || (!ip.isError() && !name.isError())) {
+			if(list.getSelectedIndex() < 0 || (!host.isError() && !name.isError())) {
 				listModel.addElement(new Profile("", ""));
 				list.setSelectedIndex(listModel.getSize() - 1);
 			}
@@ -175,7 +175,7 @@ public class ProfileConfig extends ConfigManager {
 			Profile nameText = (Profile) list.getSelectedItem();
 			
 			name.setText(nameText!=null?nameText.toString():"");
-			ip.setText(HostInfo.getProfileConfig().getString("profile" + index + ".ip"));
+			host.setText(HostInfo.getProfileConfig().getString("profile" + index + ".ip"));
 			
 			int mainProfile = GUIClient.config.getInt("profile.main");
 			main.setSelected(list.getSelectedIndex() == mainProfile);
@@ -228,7 +228,7 @@ public class ProfileConfig extends ConfigManager {
 		Properties profileConfig = HostInfo.getProfileConfig();
 		try {
 			profileConfig.addKey("profile" + index + ".name", name.getText());
-			profileConfig.addKey("profile" + index + ".ip", ip.getText());
+			profileConfig.addKey("profile" + index + ".ip", host.getText());
 		}catch(IOException e) {e.printStackTrace();}
 	}
 	
@@ -236,7 +236,7 @@ public class ProfileConfig extends ConfigManager {
 		Properties profileConfig = HostInfo.getProfileConfig();
 		try {
 			profileConfig.setKey("profile" + index + ".name", name.getText());
-			profileConfig.setKey("profile" + index + ".ip", ip.getText());
+			profileConfig.setKey("profile" + index + ".ip", host.getText());
 		}catch(IOException e) {e.printStackTrace();}
 	}
 	
@@ -260,13 +260,13 @@ public class ProfileConfig extends ConfigManager {
 
 	@Override
 	public int apply() {
-		if(!ip.isError() && !name.isError()) {
+		if(!host.isError() && !name.isError()) {
 			int index = old?list.getOldSelectedIndex():list.getSelectedIndex();
 			
 			if(index < 0)
 				index = 0;
 				
-			if(index > -1 && index < (HostInfo.getProfileConfig().getNumberLine() / 2))
+			if(index > -1 && index < (HostInfo.getProfileConfig().countLine() / 2))
 				change(index);
 			else if(index > -1)
 				add(index);

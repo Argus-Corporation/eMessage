@@ -7,14 +7,14 @@ import net.argus.gui.TextField;
 import net.argus.system.Network;
 import net.argus.util.ChangeListener;
 
-public class TextFieldIp extends TextField {
+public class TextFieldHost extends TextField {
 
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = -8837992809426360794L;
 
-	public TextFieldIp(int size) {
+	public TextFieldHost(int size) {
 		super(size);
 		addFocusListener(getDefaultFocusListener());
 		addChangeListener(getDefaultChangeListener());
