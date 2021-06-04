@@ -3,15 +3,14 @@ package net.argus.chat.client;
 import java.io.IOException;
 import java.net.UnknownHostException;
 
-import net.argus.client.Client;
-import net.argus.client.ClientManager;
-import net.argus.client.ProcessClient;
-import net.argus.client.ProcessListener;
-import net.argus.event.socket.SocketListener;
-import net.argus.security.Key;
-import net.argus.util.pack.Package;
-import net.argus.util.pack.PackageBuilder;
-import net.argus.util.pack.PackageType;
+import net.argus.event.net.process.ProcessListener;
+import net.argus.event.net.socket.SocketListener;
+import net.argus.net.Profile;
+import net.argus.net.client.Client;
+import net.argus.net.client.ClientProcess;
+import net.argus.net.pack.Package;
+import net.argus.net.socket.CardinalSocket;
+import net.argus.net.socket.CryptoSocket;
 
 public class ChatClient {
 	
@@ -19,31 +18,27 @@ public class ChatClient {
 	
 	private Client client;
 	
-	public ChatClient(String host, int port, String pseudo, String password, Key key) {
-		client = new Client(host, port, key);
+	public ChatClient(String host, int port, String pseudo) {
+		client = new Client(host, port, new CryptoSocket(false));
 		
-		client.setPseudo(pseudo);
-		client.setPassword(password);
-	}
-	
-	public ChatClient(String host, int port, String pseudo, String password) {
-		this(host, port,pseudo, password, null);
+		client.getProfile().setName(pseudo);
 	}
 	
 	public void logOut() {
-		client.sendPackage(new Package(new PackageBuilder(PackageType.LOG_OUT).addValue("message", "Leave")));
+		try {client.logOut("leave");}
+		catch(IOException e) {e.printStackTrace();}
 	}
 	
-	public void start() throws UnknownHostException, IOException {client.start();}
-	public void sendPackage(Package pack) {client.sendPackage(pack);}
-	public void stop() {client.stop();}
+	public void connect(String password) throws UnknownHostException, IOException {client.connect(password);}
+	public void send(Package pack) {client.send(pack);}
 	
 	public void addSocketListener(SocketListener listener) {client.addSocketListener(listener);}
-	public void addClientManager(ClientManager manager) {client.addClientManager(manager);}
 	public void addProcessListener(ProcessListener listener) {client.addProcessListener(listener);}
 	
 	public Client getClient() {return client;}
-	public ProcessClient getProcessClient() {return client.getProcessClient();}
+	public ClientProcess getClientProcess() {return client.getProcess();}
+	public CardinalSocket getSocket() {return client.getCardinalSocket();}
+	public Profile getProfile() {return client.getProfile();}
 	public boolean isConnected() {return client.isConnected();}
 
 }

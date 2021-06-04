@@ -18,11 +18,12 @@ import net.argus.gui.CheckBox;
 import net.argus.gui.Icon;
 import net.argus.gui.OptionPane;
 import net.argus.gui.Panel;
+import net.argus.instance.Instance;
 import net.argus.lang.Lang;
 
 public class HostInfo {
 	
-	private static Properties profileConfig = new Properties("profile", "/");
+	private static Properties profileConfig = new Properties("profile", "/", Instance.SYSTEM);
 	
 	private static String result;
 	
@@ -46,13 +47,13 @@ public class HostInfo {
 		CheckBox saveCheck = new CheckBox("profile");
 		north.add(saveCheck);
 		
-		CheckBox newCheck = new CheckBox("newip");
+		CheckBox newCheck = new CheckBox("newhost");
 		south.add(newCheck);
 		
 		JComboBox<String> list = new JComboBox<String>((String[]) hostName.toArray(new String[hostName.size()]));
 		north.add(list);
 		
-		TextFieldIp host = new TextFieldIp(12);
+		TextFieldHost host = new TextFieldHost(12);
 		south.add(host);
 		
 		Button ok = new Button("   OK   ", false);
@@ -121,7 +122,7 @@ public class HostInfo {
 	public static List<String> getHostName() {
 		List<String> name = new ArrayList<String>();
 		
-		for(int i = 0; i < (profileConfig.getNumberLine() / 2); i++)
+		for(int i = 0; i < (profileConfig.countLine() / 2); i++)
 			name.add(profileConfig.getString("profile" + i + ".name"));
 			
 		return name;

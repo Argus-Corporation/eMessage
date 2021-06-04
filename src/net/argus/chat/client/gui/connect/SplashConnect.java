@@ -181,11 +181,11 @@ public class SplashConnect extends DialogComponent {
 	
 	private FocusListener getFocusListener() {
 		return new FocusListener() {
-			public void focusLost(FocusEvent arg0) {
+			public void focusLost(FocusEvent e) {
 				if(GUIClient.getFrame().isEnabled())
 					setVisible(false);
 			}
-			public void focusGained(FocusEvent arg0) {}
+			public void focusGained(FocusEvent e) {}
 		};
 	}
 	

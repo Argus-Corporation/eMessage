@@ -26,6 +26,7 @@ public class Connect extends Thread {
 	
 	@Override
 	public void run() {
+		Thread.currentThread().setName("Client-Connector");
 		if(ClientConfig.getPort() != -1) {
 			String host = null;
 			String pseudo = null;
