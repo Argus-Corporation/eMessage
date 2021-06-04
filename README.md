@@ -1,6 +1,6 @@
 # Chat
 
-version 1.2
+version 1.3
 
 ---
 <li> <a herf="https://github.com/Argus-corporation/Chat">Chat</a>
