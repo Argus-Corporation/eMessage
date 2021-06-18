@@ -1,4 +1,4 @@
-package net.argus.chat;
+package net.argus.emessage;
 
 public class ChatDefault{
 	

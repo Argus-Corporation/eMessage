@@ -1,4 +1,4 @@
-package net.argus.chat;
+package net.argus.emessage;
 
 import javax.swing.JOptionPane;
 import javax.swing.UIManager;
@@ -12,7 +12,9 @@ import net.argus.util.debug.Debug;
 
 public class Chat {
 	
-	public static final Version VERSION = new Version("1.3");
+	public static final Version VERSION = new Version("1.3.1");
+	public static final String NAME = "eMessage";
+	public static final String COPYRIGHT = "© 2021 Argus";
 	
 	public static String[] getInfo() {
 		return new String[] {
@@ -29,7 +31,6 @@ public class Chat {
 		
 		if(!Boolean.valueOf(System.getProperty("java.awt.headless")))
 			JOptionPane.showMessageDialog(null, "You must use the launcher to run this program", "Error", JOptionPane.ERROR_MESSAGE);
-		
 	}
 
 }
