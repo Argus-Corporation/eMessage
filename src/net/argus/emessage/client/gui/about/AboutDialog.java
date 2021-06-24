@@ -13,8 +13,8 @@ import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 
 import net.argus.emessage.Chat;
+import net.argus.emessage.client.ClientResources;
 import net.argus.emessage.client.MainClient;
-import net.argus.emessage.client.gui.GUIClient;
 import net.argus.gui.Button;
 import net.argus.gui.GUI;
 import net.argus.gui.Label;
@@ -36,7 +36,7 @@ public class AboutDialog extends DialogComponent implements GUI {
 		LangRegister.addElementLanguage(this);
 		
 		setAlwaysOnTop(true);
-		setIcon(GUIClient.icon.getImage());
+		setIcon(ClientResources.icon.getImage());
 		setSize(565, 270);
 		setResizable(false);
 		
@@ -53,12 +53,12 @@ public class AboutDialog extends DialogComponent implements GUI {
 		northPan.setLayout(new BorderLayout());
 		
 		Panel westPan = new Panel();
-		westPan.add(new JLabel(GUIClient.icon));
+		westPan.add(new JLabel(ClientResources.icon));
 		
 		Panel eastPan = new Panel();
 		eastPan.setLayout(new BoxLayout(eastPan, BoxLayout.Y_AXIS));
 		
-		eastPan.add(new JLabel(GUIClient.banner));
+		eastPan.add(new JLabel(ClientResources.banner));
 		
 		Button check = new Button("checkupdate");
 		check.addActionListener(getCheckActionListener());

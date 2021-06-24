@@ -12,8 +12,8 @@ import net.argus.emessage.ChatDefault;
 import net.argus.emessage.client.MainClient;
 import net.argus.emessage.client.event.ChatEvent;
 import net.argus.emessage.client.event.EventChat;
-import net.argus.event.frame.FrameEvent;
-import net.argus.event.frame.FrameListener;
+import net.argus.event.gui.frame.FrameEvent;
+import net.argus.event.gui.frame.FrameListener;
 import net.argus.gui.Button;
 import net.argus.gui.Panel;
 import net.argus.gui.TextField;
@@ -43,7 +43,8 @@ public class PanelChatClient {
 		
 		discussion.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
 		
-		msg = new TextField(0, true);
+		msg = new TextField(0);
+		msg.addKeyListener(msg.getDefaultKeyListener());
 		send = new Button("send");
 		
 		msg.setPreferredSize(new Dimension(GUIClient.getFrame().getSize().width - 200, 25));

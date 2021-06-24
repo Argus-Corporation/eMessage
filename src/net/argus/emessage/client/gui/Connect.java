@@ -4,6 +4,7 @@ import javax.swing.JOptionPane;
 import javax.swing.UIManager;
 
 import net.argus.emessage.client.ClientConfig;
+import net.argus.emessage.client.ClientResources;
 import net.argus.emessage.client.MainClient;
 import net.argus.emessage.client.gui.config.PortConfig;
 import net.argus.emessage.client.gui.config.profile.ProfileConfig;
@@ -44,6 +45,12 @@ public class Connect extends Thread {
 					}
 						
 				}
+			}else {
+				int result = OptionPane.showMessageDialog(GUIClient.getFrame(), Lang.get("option.nodefaulthost.name"), UIManager.getString("Frame.titleErrorText"), JOptionPane.YES_NO_OPTION, JOptionPane.ERROR_MESSAGE);
+				if(result == JOptionPane.YES_OPTION) {
+					GUIClient.getConfigWindow().show();
+					GUIClient.getConfigWindow().setSelectedTree(ProfileConfig.ID);
+				}
 			}
 			
 		}else {
@@ -58,7 +65,7 @@ public class Connect extends Thread {
 	}
 	
 	public String getDefaultHost() {
-		int index = GUIClient.config.getInt("profile.main");
+		int index = ClientResources.config.getInt("profile.main");
 		if(index == -1) {
 			int result = OptionPane.showMessageDialog(GUIClient.getFrame(), Lang.get("option.nodefaulthost.name"),
 					UIManager.getString("Frame.titleErrorText"), JOptionPane.YES_NO_OPTION, JOptionPane.ERROR_MESSAGE);

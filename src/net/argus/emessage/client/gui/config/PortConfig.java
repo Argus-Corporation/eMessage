@@ -9,10 +9,9 @@ import java.io.IOException;
 import javax.swing.BoxLayout;
 
 import net.argus.emessage.ChatDefault;
-import net.argus.emessage.client.gui.GUIClient;
+import net.argus.emessage.client.ClientResources;
 import net.argus.emessage.client.gui.TextFieldPort;
 import net.argus.gui.Button;
-import net.argus.gui.Label;
 import net.argus.gui.Panel;
 
 public class PortConfig extends ConfigManager {
@@ -42,12 +41,11 @@ public class PortConfig extends ConfigManager {
 		pan.setLayout(new BoxLayout(pan, BoxLayout.Y_AXIS));
 		
 		Panel panPort = new Panel();
-		Label text = new Label("Port", false);
 		
-		port = new TextFieldPort(10);
-		port.setText(GUIClient.config.getString("port"));
+		port = new TextFieldPort(10, "port");
+		port.setText(ClientResources.config.getString("port"));
 		port.addKeyListener(getChangerKeyListener());
-		panPort.add(text);
+		
 		panPort.add(port);
 		
 		pan.add(panPort);
@@ -95,7 +93,7 @@ public class PortConfig extends ConfigManager {
 	public int apply() {
 		if(!port.isError())
 			try {
-				GUIClient.config.setKey("port", port.getText());
+				ClientResources.config.setKey("port", port.getText());
 				
 				apply.setEnabled(false);
 				return VALID_APPLY;

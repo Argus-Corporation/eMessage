@@ -10,9 +10,10 @@ import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 
 import net.argus.cjson.CJSON;
+import net.argus.emessage.client.ClientResources;
 import net.argus.emessage.client.gui.GUIClient;
-import net.argus.event.tree.TreeEvent;
-import net.argus.event.tree.TreeListener;
+import net.argus.event.gui.tree.TreeEvent;
+import net.argus.event.gui.tree.TreeListener;
 import net.argus.gui.OptionPane;
 import net.argus.gui.Panel;
 import net.argus.gui.tree.CardinalTreeNode;
@@ -43,7 +44,7 @@ public class Config {
 		fen = new JFrame("Config");
 		fen.setResizable(false);
 		fen.setSize(810, 360);
-		fen.setIconImage(GUIClient.icon16.getImage());
+		fen.setIconImage(ClientResources.icon.getImage());
 		fen.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
 		fen.addWindowListener(getFrameListener());
 		
