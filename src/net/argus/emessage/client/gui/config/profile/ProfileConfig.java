@@ -10,7 +10,7 @@ import java.util.List;
 
 import javax.swing.DefaultComboBoxModel;
 
-import net.argus.emessage.client.gui.GUIClient;
+import net.argus.emessage.client.ClientResources;
 import net.argus.emessage.client.gui.HostInfo;
 import net.argus.emessage.client.gui.TextFieldHost;
 import net.argus.emessage.client.gui.TextFieldName;
@@ -80,8 +80,10 @@ public class ProfileConfig extends ConfigManager {
 		Panel north = new Panel();
 		Panel center = new Panel();
 		
-		name = new TextFieldName(10);
-		host = new TextFieldHost(10);
+		name = new TextFieldName(10, "name");
+		host = new TextFieldHost(10, "host");
+		
+		name.setPlaceholder("");
 		
 		main = new CheckBox("main");
 		
@@ -187,14 +189,14 @@ public class ProfileConfig extends ConfigManager {
 			name.setText(nameText!=null?nameText.toString():"");
 			host.setText(HostInfo.getProfileConfig().getString("profile" + index + ".ip"));
 			
-			int mainProfile = GUIClient.config.getInt("profile.main");
+			int mainProfile = ClientResources.config.getInt("profile.main");
 			main.setSelected(list.getSelectedIndex() == mainProfile);
 		};
 	}
 	
 	private ActionListener getMainActionListener() {
 		return e -> {
-			int defIndex = GUIClient.config.getInt("profile.main");
+			int defIndex = ClientResources.config.getInt("profile.main");
 			
 			if(list.getSelectedIndex() == defIndex)
 				main.setSelected(true);
@@ -282,7 +284,7 @@ public class ProfileConfig extends ConfigManager {
 				add(index);
 			
 			if(main.isSelected())
-				try {GUIClient.config.setKey("profile.main", index);}
+				try {ClientResources.config.setKey("profile.main", index);}
 				catch (IOException e) {e.printStackTrace();}
 			
 			apply.setEnabled(false);

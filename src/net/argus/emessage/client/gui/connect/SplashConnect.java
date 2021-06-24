@@ -9,11 +9,11 @@ import java.awt.event.FocusListener;
 import javax.swing.BoxLayout;
 import javax.swing.UIManager;
 
+import net.argus.emessage.client.ClientResources;
 import net.argus.emessage.client.MainClient;
 import net.argus.emessage.client.event.ChatEvent;
 import net.argus.emessage.client.event.ChatListener;
 import net.argus.emessage.client.gui.GUIClient;
-import net.argus.gui.Icon;
 import net.argus.gui.Label;
 import net.argus.gui.Panel;
 import net.argus.gui.component.DialogComponent;
@@ -42,7 +42,7 @@ public class SplashConnect extends DialogComponent {
 		
 		addFocusListener(getFocusListener());
 		
-		setIcon(Icon.getIcon(GUIClient.icon16).getImage());
+		setIcon(ClientResources.icon.getImage());
 		
 		
 		setAlwaysOnTop(true);
@@ -83,7 +83,7 @@ public class SplashConnect extends DialogComponent {
 		Panel pan = new Panel();
 		pan.setLayout(new FlowLayout(FlowLayout.CENTER, 30, 20));
 		
-		gif = new GIFComponent(GUIClient.load);
+		gif = new GIFComponent(ClientResources.load);
 		gif.setPreferredSize(new Dimension(50, 50));
 		gif.addGIFListener(getGIFListener());
 		gif.setLoop(true);
@@ -143,7 +143,7 @@ public class SplashConnect extends DialogComponent {
 	private GIFListener getGIFListener() {
 		return e -> {
 			if(isVisible()) {
-				gif.setGIF(error?GUIClient.invalid:GUIClient.valid);
+				gif.setGIF(error?ClientResources.invalid:ClientResources.valid);
 				gif.setLoop(false);
 				gif.start();
 			}

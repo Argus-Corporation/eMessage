@@ -7,6 +7,7 @@ import java.io.IOException;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 
+import net.argus.emessage.client.ClientResources;
 import net.argus.gui.Menu;
 import net.argus.gui.MenuItem;
 import net.argus.lang.Lang;
@@ -69,7 +70,7 @@ public class MenuBarClient {
 				LangType lang = LangType.getLangType(langName, 0);
 				Lang.updateLang(lang);
 				try {
-					GUIClient.config.setKey("lang", lang.getName());
+					ClientResources.config.setKey("lang", lang.getName());
 				}catch(IOException e1) {}
 			}
 		};

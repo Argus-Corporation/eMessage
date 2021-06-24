@@ -13,17 +13,20 @@ import net.argus.emessage.client.gui.Connect;
 import net.argus.emessage.client.gui.GUIClient;
 import net.argus.emessage.pack.ChatPackagePrefab;
 import net.argus.emessage.pack.ChatPackageType;
-import net.argus.event.frame.FrameEvent;
-import net.argus.event.frame.FrameListener;
+import net.argus.event.gui.frame.FrameEvent;
+import net.argus.event.gui.frame.FrameListener;
 import net.argus.event.net.socket.SocketEvent;
 import net.argus.event.net.socket.SocketListener;
 import net.argus.exception.InstanceException;
 import net.argus.file.FileManager;
 import net.argus.file.css.CSSEngine;
+import net.argus.gui.OptionPane;
 import net.argus.gui.TextField;
 import net.argus.instance.CardinalProgram;
 import net.argus.instance.Instance;
 import net.argus.instance.Program;
+import net.argus.lang.Lang;
+import net.argus.lang.LangRegister;
 import net.argus.net.client.Client;
 import net.argus.net.pack.PackagePrefab;
 import net.argus.plugin.InitializationPlugin;
@@ -36,6 +39,7 @@ import net.argus.util.Display;
 import net.argus.util.FontManager;
 import net.argus.util.ThreadManager;
 import net.argus.util.debug.Debug;
+import net.argus.util.Error;
 
 @Program(instanceName = "client")
 public class MainClient extends CardinalProgram {
@@ -49,9 +53,9 @@ public class MainClient extends CardinalProgram {
 	
 	public static void init() {
 		ChatPackageType.init();
-		
+		ClientResources.init();
 		GUIClient.init();
-		
+
 		GUIClient.addFastAction(getFastActionListener());
 		GUIClient.addJoinAction(getJoinActionListener());
 		GUIClient.addLeaveAction(getLeaveActionListener());
@@ -72,6 +76,8 @@ public class MainClient extends CardinalProgram {
 		while(!InitializationSplash.getSplash().isFinnish())
 			GUIClient.setVisible(false);
 			
+		LangRegister.update();
+
 		GUIClient.setVisible(true);
 
 		PluginRegister.postInit(new PluginEvent(MainClient.class));
@@ -211,7 +217,7 @@ public class MainClient extends CardinalProgram {
 	
 	/**----**/
 	public static void connect(String host, String pseudo, String password) {
-		client = new ChatClient(host, GUIClient.config.getInt("port"), pseudo);
+		client = new ChatClient(host, ClientResources.config.getInt("port"), pseudo);
 		
 		client.addSocketListener(getSocketListener());
 		client.addProcessListener(new ClientChatProcess());
@@ -223,29 +229,29 @@ public class MainClient extends CardinalProgram {
 	public static void wakeUp() {notify(program);}
 	
 	public int main(String[] args) throws InstanceException {
-		InitializationSystem.initSystem(args, true, new InitializationSplash("res/logo.png", Display.getWidth() - 50, 0));
-		InitializationPlugin.register();
+		try {
+			InitializationSystem.initSystem(args, true, new InitializationSplash("res/logo.png", Display.getWidth() - 50, 0));
+			InitializationPlugin.register();
+	
+			Debug.log("Program version: " + Chat.VERSION);
+			Debug.log("Client version: " + Client.VERSION);
+	
+			instanceClient = getInstance();
+			program = this;
+			
+			Lang.setLang(ClientResources.config);
+			
+			FontManager.registerFont(FontManager.loadFont(new File(FileManager.getMainPath() + "/res/font/Roboto.ttf")));
+			Lang.updateCSS();
+			
+			CSSEngine.run("client", "bin/css");
+			
+			Debug.addBlackList(ThreadManager.THREAD_MANAGER);
+			
+			PluginRegister.preInit(new PluginEvent(Chat.getInfo()));
 
-		Debug.log("Program version: " + Chat.VERSION);
-		Debug.log("Client version: " + Client.VERSION);
-
-		instanceClient = getInstance();
-		program = this;
-		
-		FontManager.registerFont(FontManager.loadFont(new File(FileManager.getMainPath() + "/res/font/Roboto.ttf")));
-		CSSEngine.run("client", "bin/css");
-		
-		/*try {
-			ExtractTemp copy = new ExtractTemp();
-			copy.copy("*.gif");
-		}catch(IOException | URISyntaxException e) {e.printStackTrace();}
-		*/
-		Debug.addBlackList(ThreadManager.THREAD_MANAGER);
-		
-		PluginRegister.preInit(new PluginEvent(Chat.getInfo()));
-				
-		MainClient.init();
-		
+			MainClient.init();
+		}catch(Throwable e) {Error.createErrorFileLog(e); OptionPane.showErrorDialog(null, Chat.NAME, e); notify(this);};
 		wait(this);
 		return 0;
 	}

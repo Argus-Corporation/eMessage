@@ -12,10 +12,10 @@ import javax.swing.JDialog;
 import javax.swing.JOptionPane;
 import javax.swing.UIManager;
 
+import net.argus.emessage.client.ClientResources;
 import net.argus.file.Properties;
 import net.argus.gui.Button;
 import net.argus.gui.CheckBox;
-import net.argus.gui.Icon;
 import net.argus.gui.OptionPane;
 import net.argus.gui.Panel;
 import net.argus.instance.Instance;
@@ -38,7 +38,7 @@ public class HostInfo {
 		dial.setLocationRelativeTo(parent);
 		dial.setAlwaysOnTop(true);
 		dial.setResizable(false);
-		dial.setIconImage(Icon.getIcon(GUIClient.icon16).getImage());
+		dial.setIconImage(ClientResources.icon.getImage());
 		dial.setLayout(new BorderLayout());
 			
 		Panel north = new Panel();
