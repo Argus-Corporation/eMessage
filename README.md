@@ -1,6 +1,6 @@
 # eMessage
 
-Version 1.3.2
+Version 1.4
 
 ---
 <li> <a herf="https://github.com/Argus-corporation/Cardinal-Plugin">Cardinal-Plugin</a>
