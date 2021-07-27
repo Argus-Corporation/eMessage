@@ -7,6 +7,8 @@ import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 
 import javax.swing.BoxLayout;
+import javax.swing.JDialog;
+import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 
 import net.argus.emessage.client.ClientResources;
@@ -29,41 +31,42 @@ public class SplashConnect extends DialogComponent {
 	private CountDown count;
 	
 	private GIFComponent gif;
-	private Label statusText, endText;
-	private Panel main, panGIF, panStatus;
+	private Label status, statusText, endText;
+	private Panel panGIF, panStatus;
 	
 	private boolean error;
 	
 	public SplashConnect(String title) {
-		super(GUIClient.getFrame());
-		
-		count = new CountDown(5);
-		count.addCountDownListener(getCountDownListener());
+		super();
 		
 		addFocusListener(getFocusListener());
 		
-		setIcon(ClientResources.icon.getImage());
+		setIcon(ClientResources.ICON.getImage());
+		setDialogIcon(ClientResources.ICON.getImage());
 		
-		
+		getDialog().setDefaultCloseOperation(JDialog.DO_NOTHING_ON_CLOSE);
 		setAlwaysOnTop(true);
 		setResizable(false);
 		setTitle(title);
-		setClose(false);
 		
 		setSize(400, 150);
+		setLocationRelativeTo(GUIClient.FRAME);
 	}
 
 	@Override
 	public Panel getComponent() {
-		main = new Panel();
+		Panel main = new Panel();
 		main.setLayout(new BorderLayout());
 		
 		/*GIF*/
 		panGIF = getGIFPanel();
 		
 		/*STATUS*/
-		panStatus = getStatusPanel();
+		count = new CountDown(5);
+		count.addCountDownListener(getCountDownListener());
 		
+		panStatus = getStatusPanel();
+	
 		/**----**/
 		
 		MainClient.addChatListener(getChatListener());
@@ -83,7 +86,7 @@ public class SplashConnect extends DialogComponent {
 		Panel pan = new Panel();
 		pan.setLayout(new FlowLayout(FlowLayout.CENTER, 30, 20));
 		
-		gif = new GIFComponent(ClientResources.load);
+		gif = new GIFComponent(ClientResources.LOAD_GIF);
 		gif.setPreferredSize(new Dimension(50, 50));
 		gif.addGIFListener(getGIFListener());
 		gif.setLoop(true);
@@ -105,7 +108,7 @@ public class SplashConnect extends DialogComponent {
 		panText.setLayout(new BorderLayout());
 
 		
-		Label status = new Label(UIManager.getString("Text.status") + ": ", false);
+		status = new Label(UIManager.getString("Text.status") + ": ", false);
 		statusText = new Label("connection");
 		
 		
@@ -143,7 +146,7 @@ public class SplashConnect extends DialogComponent {
 	private GIFListener getGIFListener() {
 		return e -> {
 			if(isVisible()) {
-				gif.setGIF(error?ClientResources.invalid:ClientResources.valid);
+				gif.setGIF(error?ClientResources.INVALID_GIF:ClientResources.VALID_GIF);
 				gif.setLoop(false);
 				gif.start();
 			}
@@ -167,13 +170,20 @@ public class SplashConnect extends DialogComponent {
 			
 			public void end(ChatEvent e) {
 				if(isVisible()) {
-					setClose(true);
+					getDialog().setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
 					statusText.setText(Lang.get("info." + e.getMessage() + ".name"));
+										
+					SwingUtilities.invokeLater(() -> {
+						int w = status.getWidth() + statusText.getWidth() + panGIF.getWidth() + 40;
+						if(w > getDialog().getWidth())
+							setSize(w, getDialog().getHeight());
+						
+					});
 					
 					count.start();
 					gif.stop();
 					
-					GUIClient.getFrame().setEnabled(true);
+					GUIClient.FRAME.setEnabled(true);
 				}
 			}
 		};
@@ -182,7 +192,7 @@ public class SplashConnect extends DialogComponent {
 	private FocusListener getFocusListener() {
 		return new FocusListener() {
 			public void focusLost(FocusEvent e) {
-				if(GUIClient.getFrame().isEnabled())
+				if(GUIClient.FRAME.isEnabled())
 					setVisible(false);
 			}
 			public void focusGained(FocusEvent e) {}
@@ -191,13 +201,13 @@ public class SplashConnect extends DialogComponent {
 	
 	@Override
 	public void show() {
-		GUIClient.getFrame().setEnabled(false);
+		GUIClient.FRAME.setEnabled(false);
 		super.show();
 	}
 	
 	@Override
 	public void hide() {
-		GUIClient.getFrame().setEnabled(true);
+		GUIClient.FRAME.setEnabled(true);
 		super.hide();
 	}
 

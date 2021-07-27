@@ -11,38 +11,47 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
+import javax.swing.border.Border;
 
 import net.argus.emessage.Chat;
 import net.argus.emessage.client.ClientResources;
 import net.argus.emessage.client.MainClient;
+import net.argus.emessage.client.gui.GUIClient;
 import net.argus.gui.Button;
 import net.argus.gui.GUI;
 import net.argus.gui.Label;
+import net.argus.gui.LoadingLabel;
 import net.argus.gui.Panel;
 import net.argus.gui.component.DialogComponent;
 import net.argus.instance.Instance;
 import net.argus.lang.Lang;
 import net.argus.lang.LangRegister;
+import net.argus.system.UpdateInfo;
 import net.argus.system.UserSystem;
 
 public class AboutDialog extends DialogComponent implements GUI {
 	
-	private Label version = new Label("", false);
-	private Label checkLab = new Label("", false);
+	private Label version;
+	private Label dbgVersion;
+	private LoadingLabel checkLab;
 
 	public AboutDialog() {
-		super(null);
+		super();
 		
 		LangRegister.addElementLanguage(this);
 		
+		setIcon(ClientResources.ICON.getImage());
+		setDialogIcon(ClientResources.ICON.getImage());
+		
 		setAlwaysOnTop(true);
-		setIcon(ClientResources.icon.getImage());
+		
 		setSize(565, 270);
 		setResizable(false);
+		setLocationRelativeTo(GUIClient.FRAME);
 		
 		setText();
 	}
-
+	
 	@Override
 	public Panel getComponent() {
 		Panel pan = new Panel();
@@ -53,19 +62,29 @@ public class AboutDialog extends DialogComponent implements GUI {
 		northPan.setLayout(new BorderLayout());
 		
 		Panel westPan = new Panel();
-		westPan.add(new JLabel(ClientResources.icon));
+		westPan.add(new JLabel(ClientResources.ICON));
 		
 		Panel eastPan = new Panel();
 		eastPan.setLayout(new BoxLayout(eastPan, BoxLayout.Y_AXIS));
 		
-		eastPan.add(new JLabel(ClientResources.banner));
+		eastPan.add(new JLabel(ClientResources.BANNER));
 		
 		Button check = new Button("checkupdate");
 		check.addActionListener(getCheckActionListener());
 		
+		version = new Label("", false);
+		dbgVersion = new Label("", false);
+		
+		checkLab = new LoadingLabel("", false);
+		
+		version.setBorder(getVersionBorder());
+
+		checkLab.setBorder(getVersionBorder());
+		
 		eastPan.add(check);
 		eastPan.add(checkLab);
 		eastPan.add(version);
+		eastPan.add(dbgVersion);
 		
 		Panel southPan = new Panel();
 		southPan.add(new JLabel(Chat.COPYRIGHT));
@@ -80,9 +99,13 @@ public class AboutDialog extends DialogComponent implements GUI {
 		return pan;
 	}
 	
+	private Border getVersionBorder() {
+		return BorderFactory.createEmptyBorder(5, 0, 0, 0);
+	}
+	
 	private ActionListener getCheckActionListener() {
 		return (e) -> {
-			if(UserSystem.update == null) {
+			if(UserSystem.getUpdate() == null) {
 				JOptionPane.showMessageDialog(getDialog(), Lang.get("info.noupdate.name"), (String) UIManager.get("Frame.titleErrorText"), JOptionPane.ERROR_MESSAGE);
 				return;
 			}
@@ -96,14 +119,18 @@ public class AboutDialog extends DialogComponent implements GUI {
 		Thread th = new Thread(() -> {
 			Instance.setThreadInstance(MainClient.getClientInstance());
 			checkLab.setText(Lang.get("text.checkupdate.name"));
+			checkLab.start();
 			
-			if(!UserSystem.update.isLatestVersion()) {
-				int result = UserSystem.update.showDialog(UIManager.get("Text.newVersion"));
+			UpdateInfo info = UserSystem.getUpdate().isLatestVersion();
+			
+			checkLab.stop();
+			if(!info.isLatest()) {
+				int result = UserSystem.getUpdate().showDialog(info);
 				
 				if(result == JOptionPane.YES_OPTION)
-					UserSystem.update.downloadNewVersion();
+					UserSystem.getUpdate().downloadNewVersion();
 			}else {
-				UserSystem.update.showDialog(Lang.get("text.nonewupdate.name"), JOptionPane.OK_CANCEL_OPTION, JOptionPane.INFORMATION_MESSAGE);
+				UserSystem.getUpdate().showDialog(Lang.get("text.nonewupdate.name"), JOptionPane.OK_CANCEL_OPTION, JOptionPane.INFORMATION_MESSAGE);
 			}
 			SwingUtilities.invokeLater(() -> checkLab.setText(""));
 
@@ -127,7 +154,8 @@ public class AboutDialog extends DialogComponent implements GUI {
 		setTitle(Lang.get("menuitem.about.name"));
 		version.setText(Lang.get("text.version.name") + ": " + Chat.VERSION);
 		
-		//getDialog().pack();
+		if(UserSystem.getManifest() != null)
+			dbgVersion.setText(Lang.get("text.dbgversion.name") + ": " + UserSystem.getCurrentStringVersion());
 	}
 
 	@Override

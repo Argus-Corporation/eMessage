@@ -1,28 +1,25 @@
 package net.argus.emessage.client.gui.config;
 
 import java.awt.BorderLayout;
-import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.io.IOException;
 
 import javax.swing.BoxLayout;
 
-import net.argus.emessage.ChatDefault;
+import net.argus.emessage.EMessageProperty;
 import net.argus.emessage.client.ClientResources;
+import net.argus.emessage.client.MainClient;
 import net.argus.emessage.client.gui.TextFieldPort;
-import net.argus.gui.Button;
 import net.argus.gui.Panel;
 
 public class PortConfig extends ConfigManager {
 	
 	private TextFieldPort port;
-	
-	private Button apply;
-	
+		
 	public static final int ID = 1;
 
-	public PortConfig() {super(ID);}
+	public PortConfig() {super(ID, MainClient.getClientInstance());}
 
 	@Override
 	public Panel getConfigPanel() {
@@ -43,7 +40,7 @@ public class PortConfig extends ConfigManager {
 		Panel panPort = new Panel();
 		
 		port = new TextFieldPort(10, "port");
-		port.setText(ClientResources.config.getString("port"));
+		port.setText(ClientResources.CONFIG.getString("port"));
 		port.addKeyListener(getChangerKeyListener());
 		
 		panPort.add(port);
@@ -56,27 +53,11 @@ public class PortConfig extends ConfigManager {
 	public Panel getSouthPanel() {
 		Panel pan = new Panel();
 		
-		Button butDefault = new Button("default");
-		apply = new Button("apply");
-		
-		butDefault.addActionListener(getDefaultActionListener());
-		apply.addActionListener(getApplyActionListener());
-		
 		apply.setEnabled(false);
 		
-		pan.add(butDefault);
+		pan.add(def);
 		pan.add(apply);
 		return pan;
-	}
-	
-	private ActionListener getApplyActionListener() {return (e) -> apply();}
-	
-	private ActionListener getDefaultActionListener() {
-		return (e) -> {
-			port.setText(Integer.toString(ChatDefault.DEFAULT_PORT));
-			
-			getChangerKeyListener().keyPressed(null);
-		};
 	}
 	
 	private KeyListener getChangerKeyListener() {
@@ -93,7 +74,7 @@ public class PortConfig extends ConfigManager {
 	public int apply() {
 		if(!port.isError())
 			try {
-				ClientResources.config.setKey("port", port.getText());
+				ClientResources.CONFIG.setKey("port", port.getText());
 				
 				apply.setEnabled(false);
 				return VALID_APPLY;
@@ -102,5 +83,12 @@ public class PortConfig extends ConfigManager {
 		return ERROR_APPLY;
 		
 	}
-	
+
+	@Override
+	public void setDefault() {
+		port.setText(Integer.toString((int) EMessageProperty.get("DefaultPort")));
+		
+		getChangerKeyListener().keyPressed(null);
+		
+	}
 }

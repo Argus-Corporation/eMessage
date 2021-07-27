@@ -5,59 +5,62 @@ import java.awt.event.ActionListener;
 import java.io.IOException;
 
 import net.argus.emessage.ChatDefault;
+import net.argus.emessage.EMessageProperty;
 import net.argus.emessage.client.ClientResources;
 import net.argus.emessage.client.gui.about.AboutDialog;
 import net.argus.emessage.client.gui.config.Config;
+import net.argus.emessage.client.gui.utility.UserUtility;
+import net.argus.emessage.client.room.RoomRegister;
 import net.argus.event.gui.frame.FrameListener;
 import net.argus.gui.bubble.Bubble;
 
 public class GUIClient {
 		
-	private static ClientFrame frame;
+	public static final ClientFrame FRAME = new ClientFrame();
 	
 	private static Config configWindow;
 	
-	public static final MenuBarClient menuBar = new MenuBarClient();
-	public static final PanelChatClient panChat = new PanelChatClient();
+	public static final MenuBarClient MENU_BAR = new MenuBarClient();
+	public static final PanelChatClient CHAT_PANEL = new PanelChatClient();
 	
-	private static AboutDialog aboutDialog;
+	public static final AboutDialog ABOUT = new AboutDialog();
+	
+	public static final UserUtility UTILITY = new UserUtility();
 	
 	public static void init() {
-		frame = getFrame();
-
 		try {
-			frame.add(BorderLayout.NORTH, menuBar.getMenuBar());
-			frame.add(BorderLayout.CENTER, panChat.getChatPanel());
+			FRAME.add(BorderLayout.NORTH, MENU_BAR.getMenuBar());
+			FRAME.add(BorderLayout.CENTER, CHAT_PANEL.getChatPanel());
 		}catch(IOException e) {}
 		
-		Bubble.setMaxWidth(frame.getWidth() / 2 - 20);
+		GUIClient.leave();
 		
+		Bubble.setMaxWidth(FRAME.getWidth() / 2 - 20);
+				
 	}
 	
 	public static void connect() {
-		menuBar.getFast().setEnabled(false);
-		menuBar.getJoin().setEnabled(false);
-		menuBar.getLeave().setEnabled(true);
+		MENU_BAR.getFast().setEnabled(false);
+		MENU_BAR.getJoin().setEnabled(false);
+		MENU_BAR.getLeave().setEnabled(true);
+		
+		MENU_BAR.getUtility().setEnabled(true);
+		
+		if(ChatDefault.openUtilityOnConnection())
+			UTILITY.show();
 	}
 	
 	public static void leave() {
-		menuBar.getFast().setEnabled(true);
-		menuBar.getJoin().setEnabled(true);
-		menuBar.getLeave().setEnabled(false);
-	}
-	
-	public static ClientFrame getFrame() {
-		if(frame == null)
-			frame = new ClientFrame(ClientResources.config);
+		MENU_BAR.getFast().setEnabled(true);
+		MENU_BAR.getJoin().setEnabled(true);
+		MENU_BAR.getLeave().setEnabled(false);
 		
-		return frame;
-	}
-	
-	public static AboutDialog getAboutDialog() {
-		if(aboutDialog == null)
-			aboutDialog = new AboutDialog();
+		MENU_BAR.getUtility().setEnabled(false);
 		
-		return aboutDialog;
+		UTILITY.hide();
+		
+		RoomRegister.removeAll();
+
 	}
 	
 	public static Config getConfigWindow() {
@@ -67,29 +70,30 @@ public class GUIClient {
 		return configWindow;
 	}
 	
-	public static void clearMessage() {panChat.clearMessage();}
+	public static void clearMessage() {CHAT_PANEL.clearMessage();}
 		
-	public static void addFrameListener(FrameListener listener) {frame.addFrameListener(listener);}
+	public static void addFrameListener(FrameListener listener) {FRAME.addFrameListener(listener);}
 	
-	public static void addFastAction(ActionListener actionListener) {menuBar.getFast().addActionListener(actionListener);}
-	public static void addJoinAction(ActionListener actionListener) {menuBar.getJoin().addActionListener(actionListener);}
-	public static void addLeaveAction(ActionListener actionListener) {menuBar.getLeave().addActionListener(actionListener);}
+	public static void addFastAction(ActionListener actionListener) {MENU_BAR.getFast().addActionListener(actionListener);}
+	public static void addJoinAction(ActionListener actionListener) {MENU_BAR.getJoin().addActionListener(actionListener);}
+	public static void addLeaveAction(ActionListener actionListener) {MENU_BAR.getLeave().addActionListener(actionListener);}
 	
-	public static void addPreferenceAction(ActionListener actionListener) {menuBar.getPreference().addActionListener(actionListener);}
+	public static void addPreferenceAction(ActionListener actionListener) {MENU_BAR.getPreference().addActionListener(actionListener);}
+	public static void addUtilityAction(ActionListener actionListener) {MENU_BAR.getUtility().addActionListener(actionListener);}
 	
-	public static void addAboutAction(ActionListener actionListener) {menuBar.getAbout().addActionListener(actionListener);}
+	public static void addAboutAction(ActionListener actionListener) {MENU_BAR.getAbout().addActionListener(actionListener);}
 	
-	public static void addSendAction(ActionListener actionListener) {panChat.getSendButton().addActionListener(actionListener);}
+	public static void addSendAction(ActionListener actionListener) {CHAT_PANEL.getSendButton().addActionListener(actionListener);}
 	
-	public static void addMessage(int pos, String pseudo, String message) {panChat.addMessage(pos, pseudo, message);}
-	public static void addMessage(String pseudo, String message) {panChat.addMessage(PanelChatClient.YOU, pseudo, message);}
-	public static void addMessage(String message) {panChat.addMessage(PanelChatClient.ME, "", message);}
-	public static void addSystemMessage(String message) {panChat.addSystemMessage(message);}
+	public static void addMessage(int pos, String pseudo, String message) {CHAT_PANEL.addMessage(pos, pseudo, message);}
+	public static void addMessage(String pseudo, String message) {CHAT_PANEL.addMessage(PanelChatClient.YOU, pseudo, message);}
+	public static void addMessage(String message) {CHAT_PANEL.addMessage(PanelChatClient.ME, "", message);}
+	public static void addSystemMessage(String message) {CHAT_PANEL.addSystemMessage(message);}
 	
 	public static void addArrayMessage(Object[] messages) {
-		panChat.addArrayMessage(PanelChatClient.YOU, ChatDefault.DEFAULT_SYSTEM_NAME, messages);
+		CHAT_PANEL.addArrayMessage(PanelChatClient.YOU, (String) EMessageProperty.get("DefaultSystemName"), messages);
 	}
 	
-	public static void setVisible(boolean v) {frame.setVisible(v);}
+	public static void setVisible(boolean v) {FRAME.setVisible(v);}
 	
 }

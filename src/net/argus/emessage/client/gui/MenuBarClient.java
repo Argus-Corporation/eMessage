@@ -14,13 +14,20 @@ import net.argus.lang.Lang;
 import net.argus.lang.LangType;
 
 public class MenuBarClient {
+	
+	private JMenuBar bar;
 
 	private Menu connection, configuration, lang, help;
 	
-	private MenuItem fast, join, leave, preference, about;
+	private MenuItem fast, join, leave, preference, utility, about;
+	
+	
+	public MenuBarClient() {
+		init();
+	}
 		
-	public JMenuBar getMenuBar() {
-		JMenuBar bar = new JMenuBar();
+	private JMenuBar init() {
+		bar = new JMenuBar();
 		
 		connection = new Menu("connection");
 		configuration = new Menu("configuration");
@@ -32,10 +39,9 @@ public class MenuBarClient {
 		leave = new MenuItem("leave");
 		
 		preference = new MenuItem("preference");
+		utility = new MenuItem("utility");
 		
 		about = new MenuItem("about");
-		
-		GUIClient.leave();
 		
 		Menu change = new Menu("change");
 
@@ -51,6 +57,7 @@ public class MenuBarClient {
 		connection.add(leave);
 				
 		configuration.add(preference);
+		configuration.add(utility);
 		
 		lang.add(change);
 		
@@ -70,11 +77,13 @@ public class MenuBarClient {
 				LangType lang = LangType.getLangType(langName, 0);
 				Lang.updateLang(lang);
 				try {
-					ClientResources.config.setKey("lang", lang.getName());
+					ClientResources.CONFIG.setKey("lang", lang.getName());
 				}catch(IOException e1) {}
 			}
 		};
 	}
+	
+	public JMenuBar getMenuBar() {return bar;}
 	
 	public Menu getConnection() {return connection;}
 	public Menu getLang() {return lang;}
@@ -86,6 +95,7 @@ public class MenuBarClient {
 	public MenuItem getLeave() {return leave;}
 	
 	public MenuItem getPreference() {return preference;}
+	public MenuItem getUtility() {return utility;}
 	
 	public MenuItem getAbout() {return about;}
 	

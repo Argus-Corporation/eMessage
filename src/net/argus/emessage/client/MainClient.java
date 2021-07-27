@@ -11,6 +11,7 @@ import net.argus.emessage.client.event.ChatListener;
 import net.argus.emessage.client.event.EventChat;
 import net.argus.emessage.client.gui.Connect;
 import net.argus.emessage.client.gui.GUIClient;
+import net.argus.emessage.client.gui.PanelChatClient;
 import net.argus.emessage.pack.ChatPackagePrefab;
 import net.argus.emessage.pack.ChatPackageType;
 import net.argus.event.gui.frame.FrameEvent;
@@ -34,12 +35,13 @@ import net.argus.plugin.PluginEvent;
 import net.argus.plugin.PluginRegister;
 import net.argus.system.InitializationSplash;
 import net.argus.system.InitializationSystem;
+import net.argus.system.UserSystem;
 import net.argus.util.ArrayManager;
 import net.argus.util.Display;
+import net.argus.util.Error;
 import net.argus.util.FontManager;
 import net.argus.util.ThreadManager;
 import net.argus.util.debug.Debug;
-import net.argus.util.Error;
 
 @Program(instanceName = "client")
 public class MainClient extends CardinalProgram {
@@ -49,7 +51,6 @@ public class MainClient extends CardinalProgram {
 	private static EventChat event = new EventChat();
 	
 	private static Instance instanceClient;
-	private static CardinalProgram program;
 	
 	public static void init() {
 		ChatPackageType.init();
@@ -61,6 +62,7 @@ public class MainClient extends CardinalProgram {
 		GUIClient.addLeaveAction(getLeaveActionListener());
 		
 		GUIClient.addPreferenceAction(getPreferenceActionListener());
+		GUIClient.addUtilityAction(getUtilityActionListener());
 		
 		GUIClient.addAboutAction(getAboutActionListener());
 		
@@ -79,7 +81,6 @@ public class MainClient extends CardinalProgram {
 		LangRegister.update();
 
 		GUIClient.setVisible(true);
-
 		PluginRegister.postInit(new PluginEvent(MainClient.class));
 		
 	}
@@ -100,15 +101,22 @@ public class MainClient extends CardinalProgram {
 		return (ActionEvent e) -> {Instance.setThreadInstance(instanceClient); GUIClient.getConfigWindow().show();};
 	}
 	
+	public static ActionListener getUtilityActionListener() {
+		return (ActionEvent e) -> {
+			Instance.setThreadInstance(instanceClient);
+			GUIClient.UTILITY.show();
+		};
+	}
+	
 	public static ActionListener getAboutActionListener() {
-		return (ActionEvent e) -> {Instance.setThreadInstance(instanceClient); GUIClient.getAboutDialog().show();};
+		return (ActionEvent e) -> {Instance.setThreadInstance(instanceClient); GUIClient.ABOUT.show();};
 	}
 	
 	public static ActionListener getSendActionListener() {
 		return new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				TextField field = GUIClient.panChat.getTextField();
+				TextField field = GUIClient.CHAT_PANEL.getTextField();
 				String msg = field.getText();
 				
 				if(client != null && client.isConnected() && ArrayManager.isExist(msg.toCharArray(), 0)) {
@@ -126,6 +134,7 @@ public class MainClient extends CardinalProgram {
 					field.copyData();
 					field.setText("");
 				}
+				
 			}
 		};
 	
@@ -135,7 +144,6 @@ public class MainClient extends CardinalProgram {
 		return new FrameListener() {
 			public void frameResizing(FrameEvent e) {}
 
-			@SuppressWarnings("deprecation")
 			@Override
 			public void frameClosing(FrameEvent e) {
 				if(client != null && client.isConnected()) {
@@ -143,10 +151,6 @@ public class MainClient extends CardinalProgram {
 					
 					client.getClientProcess().close();
 				}
-				
-				wakeUp();
-				GUIClient.getFrame().setVisible(false);
-				Thread.currentThread().stop();
 			}	
 			public void frameMinimalized(FrameEvent e) {}
 		};
@@ -181,27 +185,38 @@ public class MainClient extends CardinalProgram {
 		return new ChatListener() {
 			
 			@Override
-			public void sendMessage(ChatEvent e) {}
+			public void sendMessage(ChatEvent e) {
+				if(!e.getMessage().startsWith("/"))
+					ClientResources.SEND_MESSAGE.play();				
+			}
 			
 			@Override
-			public void receiveMessage(ChatEvent e) {}
+			public void receiveMessage(ChatEvent e) {
+			}
 			
 			@Override
 			public void disconnect(ChatEvent e) {
-				if(e.isError())
+				if(e.isError()) {
+					ClientResources.ERROR.play();
 					GUIClient.addSystemMessage(("You could not connect") + (e.getMessage()!=null?": " + e.getMessage():""));
-				else
+				}else
 					GUIClient.addSystemMessage(("You are disconnected") + (e.getMessage()!=null?": " + e.getMessage():""));
+				
 			}
 			
 			@Override
 			public void connect(ChatEvent e) {
+				ClientResources.VALID.play();
+				
 				GUIClient.clearMessage();
 				GUIClient.addSystemMessage("You are connected");
 			}
 			
 			@Override
-			public void addMessage(ChatEvent e) {}
+			public void addMessage(ChatEvent e) {
+				if(e.getPos() == PanelChatClient.YOU)
+					ClientResources.NEW_MESSAGE.play();
+			}
 		};
 	}
 	
@@ -217,7 +232,7 @@ public class MainClient extends CardinalProgram {
 	
 	/**----**/
 	public static void connect(String host, String pseudo, String password) {
-		client = new ChatClient(host, ClientResources.config.getInt("port"), pseudo);
+		client = new ChatClient(host, ClientResources.CONFIG.getInt("port"), pseudo);
 		
 		client.addSocketListener(getSocketListener());
 		client.addProcessListener(new ClientChatProcess());
@@ -226,34 +241,39 @@ public class MainClient extends CardinalProgram {
 		catch(IOException e) {}
 	}
 	
-	public static void wakeUp() {notify(program);}
+	public static void joinRoom(String roomName, String password) {
+		String command = "/joinroom \"" + roomName + "\"";
+		if(password != null)
+			command += " \"" + password + "\"";
+		
+		client.send(PackagePrefab.genCommandPackage(command));
+	}
 	
-	public int main(String[] args) throws InstanceException {
+	public static void stop() {UserSystem.exit(0);}
+	
+	public void main(String[] args) throws InstanceException {
 		try {
 			InitializationSystem.initSystem(args, true, new InitializationSplash("res/logo.png", Display.getWidth() - 50, 0));
 			InitializationPlugin.register();
+			
+			Debug.addBlackList(ThreadManager.THREAD_MANAGER);
 	
 			Debug.log("Program version: " + Chat.VERSION);
 			Debug.log("Client version: " + Client.VERSION);
-	
+
 			instanceClient = getInstance();
-			program = this;
 			
-			Lang.setLang(ClientResources.config);
+			Lang.setLang(ClientResources.CONFIG);
 			
 			FontManager.registerFont(FontManager.loadFont(new File(FileManager.getMainPath() + "/res/font/Roboto.ttf")));
 			Lang.updateCSS();
 			
 			CSSEngine.run("client", "bin/css");
 			
-			Debug.addBlackList(ThreadManager.THREAD_MANAGER);
-			
 			PluginRegister.preInit(new PluginEvent(Chat.getInfo()));
 
 			MainClient.init();
-		}catch(Throwable e) {Error.createErrorFileLog(e); OptionPane.showErrorDialog(null, Chat.NAME, e); notify(this);};
-		wait(this);
-		return 0;
+		}catch(Throwable e) {Error.createErrorFileLog(e); e.printStackTrace(); OptionPane.showErrorDialog(null, Chat.NAME, e); stop();};
 	}
 	
 }

@@ -59,7 +59,7 @@ public class ProcessMonitor {
 	
 	public void stop() {
 		running = false;
-		MainMonitor.wakeUp();
+		MainMonitor.stop();
 	}
 
 }
