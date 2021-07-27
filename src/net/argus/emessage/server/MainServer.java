@@ -3,8 +3,10 @@ package net.argus.emessage.server;
 import java.io.IOException;
 
 import net.argus.emessage.Chat;
-import net.argus.emessage.ChatDefault;
+import net.argus.emessage.EMessageProperty;
+import net.argus.emessage.pack.ChatPackagePrefab;
 import net.argus.emessage.pack.ChatPackageType;
+import net.argus.emessage.proxy.MainProxy;
 import net.argus.emessage.server.command.ChatCommands;
 import net.argus.event.net.server.ServerEvent;
 import net.argus.event.net.server.ServerListener;
@@ -13,54 +15,70 @@ import net.argus.instance.CardinalProgram;
 import net.argus.instance.Program;
 import net.argus.monitoring.event.MonitoringEvent;
 import net.argus.monitoring.event.MonitoringListener;
+import net.argus.monitoring.server.MonitorWhiteList;
 import net.argus.monitoring.server.MonitoringClient;
 import net.argus.monitoring.server.MonitoringServer;
 import net.argus.net.server.Server;
+import net.argus.net.server.ServerProcess;
 import net.argus.net.server.ServerProcessEvent;
 import net.argus.net.server.role.Role;
+import net.argus.net.server.room.Room;
+import net.argus.net.server.room.RoomRegister;
 import net.argus.net.socket.CryptoSocket;
 import net.argus.plugin.InitializationPlugin;
 import net.argus.plugin.PluginEvent;
 import net.argus.plugin.PluginRegister;
 import net.argus.system.InitializationSystem;
+import net.argus.system.Network;
 import net.argus.system.UserSystem;
+import net.argus.util.Error;
 import net.argus.util.debug.Debug;
 import net.argus.util.debug.Info;
 
 @Program(instanceName = "server")
 public class MainServer extends CardinalProgram {
-	
-	private static CardinalProgram program;
-	
+		
 	private static MonitoringServer monitoring;
 	
 	private static Server serv;
 	
-	private static int PORT = ChatDefault.DEFAULT_PORT; 
-	private static int SIZE = 100;
+	private static int port = EMessageProperty.getInt("DefaultPort"); 
+	private static int size = EMessageProperty.getInt("DefaultMainRoomSize");
 	
-	private static String PASSWORD = "rt";
+	private static String password;
 	
 	public static void init() {
 		info();
+		
+		if(UserSystem.getBooleanProperty("proxy.local")) {
+			int proxyPort = UserSystem.getIntegerProperty("proxy.port");
+			if(proxyPort <= 0)
+				proxyPort = EMessageProperty.getInt("AlternativePort");
+			
+			try {MainProxy.init(Network.getByName("127.0.0.1"), port, proxyPort);}
+			catch(IOException e) {Error.createErrorFileLog(e); Debug.log("Error when create proxy server", Info.ERROR);}
+		}
 		
 		ChatPackageType.init();
 		ChatCommands.init();
 		
 		try {
-			monitoring = new MonitoringServer(8579);
+			monitoring = new MonitoringServer(8495);
 			monitoring.addMonitoringListener(getMonitoringListener());
 			monitoring.open();
-		}catch(IOException e) {Debug.log("Error: port 8579 for the monitoring server is not available", Info.ERROR);}
+		}catch(IOException e) {Debug.log("Error: port 8495 for the monitoring server is not available", Info.ERROR);}
 		
-		serv = new Server(SIZE, PORT);
+		whitelistMonitor();
+		
+		serv = new Server(size, port);
 		serv.addServerListener(getServerListener());
 		
 		ServerProcessEvent.addProcessListener(new ServerChatProcess());
 		
 		PluginRegister.init(new PluginEvent(MainServer.class));
 		
-		new Role("administrator", PASSWORD, 10);
+		if(password != null && !password.equals(""))
+			new Role("administrator", password, 10);
 		
 		serv.open(new CryptoSocket(true));
 				
@@ -73,22 +91,79 @@ public class MainServer extends CardinalProgram {
 		
 		String password = UserSystem.getProperty("password");
 		
-		PORT = port!=-1?port:PORT;
-		SIZE = size!=-1?size:SIZE;
+		MainServer.port = port!=-1?port:MainServer.port;
+		MainServer.size = size!=-1?size:MainServer.size;
 		
-		PASSWORD = password!=null?password:PASSWORD;
+		MainServer.password = password!=null?password:MainServer.password;
+		
 	}
+	
+	private static void whitelistMonitor() {
+		String list = UserSystem.getProperty("monitor");
+		
+		if(list == null || list.equals(""))
+			return;
+		
+		String[] hosts = list.split(";");
+		
+		for(String host : hosts)
+			MonitorWhiteList.addInetAddress(Network.getByName(host));
+	}
+	
+	public static void sendNewRoom(Room newRoom) {
+		for(Room r : RoomRegister.getRooms()) {
+			for(ServerProcess p : r.getClients()) {
+				try {p.send(ChatPackagePrefab.genRoomPackage(newRoom));}
+				catch(IOException e) {e.printStackTrace();}
+			}
+		}
+	}
+	
+	public static void sendCloseRoom(Room newRoom) {
+		for(Room r : RoomRegister.getRooms()) {
+			for(ServerProcess p : r.getClients()) {
+				try {p.send(ChatPackagePrefab.genCloseRoomPackage(newRoom));}
+				catch(IOException e) {e.printStackTrace();}
+			}
+		}
+	}
+	
+	public static void sendRoom(ServerProcess p) {
+		for(Room r : RoomRegister.getRooms())
+			try {p.send(ChatPackagePrefab.genRoomPackage(r));}
+			catch(IOException e) {e.printStackTrace();}
+	}
+
 	
 	private static ServerListener getServerListener() {
 		return new ServerListener() {
 			@Override
-			public void stop(ServerEvent e) {wakeUp();}
+			public void stop(ServerEvent e) {MainServer.stop();}
 			
 			@Override
 			public void open(ServerEvent e) {}
 
 			@Override
 			public void error(ServerEvent e) {stop(e);}
+
+			@Override
+			public void roomCreate(ServerEvent e) {
+				Room room = (Room) e.getObject();
+				sendNewRoom(room);
+			}
+
+			@Override
+			public void roomRemove(ServerEvent e) {
+				Room room = (Room) e.getObject();
+				sendCloseRoom(room);
+			}
+
+			@Override
+			public void userJoin(ServerEvent e) {
+				ServerProcess p = (ServerProcess) e.getObject();
+				
+				sendRoom(p);
+			}
 		};
 	}
 	
@@ -103,23 +178,17 @@ public class MainServer extends CardinalProgram {
 			}
 		};
 	}
+		
+	public static void stop() {UserSystem.exit(0);}
 	
-	public static void wakeUp() {notify(program);}
-	
-	public int main(String[] args) throws InstanceException {
+	public void main(String[] args) throws InstanceException {
 		InitializationSystem.initSystem(args, false);
 		InitializationPlugin.register();
 		
 		Debug.log("Program version: " + Chat.VERSION);
-		
-		program = this;
-		
+				
 		PluginRegister.preInit(new PluginEvent(MainServer.class));
-		
 		MainServer.init();
-		
-		wait(this);
-		return 0;
 	}
 
 }

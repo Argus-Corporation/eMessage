@@ -4,123 +4,96 @@ import java.awt.BorderLayout;
 import java.awt.event.ActionListener;
 import java.io.IOException;
 
-import javax.swing.ImageIcon;
-
-import net.argus.cjson.CJSON;
-import net.argus.cjson.CJSONParser;
 import net.argus.emessage.ChatDefault;
+import net.argus.emessage.EMessageProperty;
+import net.argus.emessage.client.ClientResources;
 import net.argus.emessage.client.gui.about.AboutDialog;
 import net.argus.emessage.client.gui.config.Config;
-import net.argus.event.frame.FrameListener;
-import net.argus.file.CJSONFile;
-import net.argus.file.FileManager;
-import net.argus.file.Properties;
-import net.argus.gui.Icon;
+import net.argus.emessage.client.gui.utility.UserUtility;
+import net.argus.emessage.client.room.RoomRegister;
+import net.argus.event.gui.frame.FrameListener;
 import net.argus.gui.bubble.Bubble;
-import net.argus.image.gif.GIF;
-import net.argus.image.gif.GIFLoader;
-import net.argus.lang.Lang;
 
 public class GUIClient {
-	
-	public static final Properties config = new Properties("config", "bin");;
-	
-	private static ClientFrame frame;
+		
+	public static final ClientFrame FRAME = new ClientFrame();
 	
 	private static Config configWindow;
 	
-	public static final String iconPath = FileManager.getPath("res/eMessage.png");
+	public static final MenuBarClient MENU_BAR = new MenuBarClient();
+	public static final PanelChatClient CHAT_PANEL = new PanelChatClient();
 	
-	public static final ImageIcon icon = new ImageIcon(iconPath);
-	public static final ImageIcon icon16 = Icon.getIcon(iconPath, 16);
-	public static final ImageIcon icon32 = Icon.getIcon(iconPath, 32);
+	public static final AboutDialog ABOUT = new AboutDialog();
 	
-	public static final ImageIcon banner = new ImageIcon(FileManager.getPath("res/banner.png"));
-	
-	public static final MenuBarClient menuBar = new MenuBarClient();
-	public static final PanelChatClient panChat = new PanelChatClient();
-	
-	private static AboutDialog aboutDialog;
-	
-	public static final GIF load = GIFLoader.load(FileManager.getMainPath() + "/res/gif/load.gif");
-	public static final GIF valid = GIFLoader.load(FileManager.getMainPath() + "/res/gif/valid.gif");
-	public static final GIF invalid = GIFLoader.load(FileManager.getMainPath() + "/res/gif/invalid.gif");
-	
-	private static CJSON treeConfig = CJSONParser.getCJSON(new CJSONFile("config", "bin"));
+	public static final UserUtility UTILITY = new UserUtility();
 	
 	public static void init() {
-		Lang.setLang(config);
-
-		frame = getFrame();
-
 		try {
-			frame.add(BorderLayout.NORTH, menuBar.getMenuBar());
-			frame.add(BorderLayout.CENTER, panChat.getChatPanel());
+			FRAME.add(BorderLayout.NORTH, MENU_BAR.getMenuBar());
+			FRAME.add(BorderLayout.CENTER, CHAT_PANEL.getChatPanel());
 		}catch(IOException e) {}
 		
-		Bubble.setMaxWidth(frame.getWidth() / 2 - 20);
+		GUIClient.leave();
 		
+		Bubble.setMaxWidth(FRAME.getWidth() / 2 - 20);
+				
 	}
 	
 	public static void connect() {
-		menuBar.getFast().setEnabled(false);
-		menuBar.getJoin().setEnabled(false);
-		menuBar.getLeave().setEnabled(true);
+		MENU_BAR.getFast().setEnabled(false);
+		MENU_BAR.getJoin().setEnabled(false);
+		MENU_BAR.getLeave().setEnabled(true);
+		
+		MENU_BAR.getUtility().setEnabled(true);
+		
+		if(ChatDefault.openUtilityOnConnection())
+			UTILITY.show();
 	}
 	
 	public static void leave() {
-		menuBar.getFast().setEnabled(true);
-		menuBar.getJoin().setEnabled(true);
-		menuBar.getLeave().setEnabled(false);
+		MENU_BAR.getFast().setEnabled(true);
+		MENU_BAR.getJoin().setEnabled(true);
+		MENU_BAR.getLeave().setEnabled(false);
 		
-	}
-	
-	public static ClientFrame getFrame() {
-		if(frame == null)
-			frame = new ClientFrame(config);
+		MENU_BAR.getUtility().setEnabled(false);
 		
-		return frame;
-	}
-	
-	public static AboutDialog getAboutDialog() {
-		if(aboutDialog == null)
-			aboutDialog = new AboutDialog();
+		UTILITY.hide();
 		
-		return aboutDialog;
+		RoomRegister.removeAll();
+
 	}
 	
 	public static Config getConfigWindow() {
 		if(configWindow == null)
-			configWindow = new Config(treeConfig);
+			configWindow = new Config(ClientResources.treeConfig);
 			
 		return configWindow;
 	}
 	
-	public static void clearMessage() {panChat.clearMessage();}
+	public static void clearMessage() {CHAT_PANEL.clearMessage();}
+		
+	public static void addFrameListener(FrameListener listener) {FRAME.addFrameListener(listener);}
 	
-	public static CJSON getTreeConfig() {return treeConfig;}
+	public static void addFastAction(ActionListener actionListener) {MENU_BAR.getFast().addActionListener(actionListener);}
+	public static void addJoinAction(ActionListener actionListener) {MENU_BAR.getJoin().addActionListener(actionListener);}
+	public static void addLeaveAction(ActionListener actionListener) {MENU_BAR.getLeave().addActionListener(actionListener);}
 	
-	public static void addFrameListener(FrameListener listener) {frame.addFrameListener(listener);}
+	public static void addPreferenceAction(ActionListener actionListener) {MENU_BAR.getPreference().addActionListener(actionListener);}
+	public static void addUtilityAction(ActionListener actionListener) {MENU_BAR.getUtility().addActionListener(actionListener);}
 	
-	public static void addFastAction(ActionListener actionListener) {menuBar.getFast().addActionListener(actionListener);}
-	public static void addJoinAction(ActionListener actionListener) {menuBar.getJoin().addActionListener(actionListener);}
-	public static void addLeaveAction(ActionListener actionListener) {menuBar.getLeave().addActionListener(actionListener);}
+	public static void addAboutAction(ActionListener actionListener) {MENU_BAR.getAbout().addActionListener(actionListener);}
 	
-	public static void addPreferenceAction(ActionListener actionListener) {menuBar.getPreference().addActionListener(actionListener);}
+	public static void addSendAction(ActionListener actionListener) {CHAT_PANEL.getSendButton().addActionListener(actionListener);}
 	
-	public static void addAboutAction(ActionListener actionListener) {menuBar.getAbout().addActionListener(actionListener);}
-	
-	public static void addSendAction(ActionListener actionListener) {panChat.getSendButton().addActionListener(actionListener);}
-	
-	public static void addMessage(int pos, String pseudo, String message) {panChat.addMessage(pos, pseudo, message);}
-	public static void addMessage(String pseudo, String message) {panChat.addMessage(PanelChatClient.YOU, pseudo, message);}
-	public static void addMessage(String message) {panChat.addMessage(PanelChatClient.ME, "", message);}
-	public static void addSystemMessage(String message) {panChat.addSystemMessage(message);}
+	public static void addMessage(int pos, String pseudo, String message) {CHAT_PANEL.addMessage(pos, pseudo, message);}
+	public static void addMessage(String pseudo, String message) {CHAT_PANEL.addMessage(PanelChatClient.YOU, pseudo, message);}
+	public static void addMessage(String message) {CHAT_PANEL.addMessage(PanelChatClient.ME, "", message);}
+	public static void addSystemMessage(String message) {CHAT_PANEL.addSystemMessage(message);}
 	
 	public static void addArrayMessage(Object[] messages) {
-		panChat.addArrayMessage(PanelChatClient.YOU, ChatDefault.DEFAULT_SYSTEM_NAME, messages);
+		CHAT_PANEL.addArrayMessage(PanelChatClient.YOU, (String) EMessageProperty.get("DefaultSystemName"), messages);
 	}
 	
-	public static void setVisible(boolean v) {frame.setVisible(v);}
+	public static void setVisible(boolean v) {FRAME.setVisible(v);}
 	
 }

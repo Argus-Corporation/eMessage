@@ -4,6 +4,7 @@ import javax.swing.JOptionPane;
 import javax.swing.UIManager;
 
 import net.argus.emessage.client.ClientConfig;
+import net.argus.emessage.client.ClientResources;
 import net.argus.emessage.client.MainClient;
 import net.argus.emessage.client.gui.config.PortConfig;
 import net.argus.emessage.client.gui.config.profile.ProfileConfig;
@@ -35,19 +36,25 @@ public class Connect extends Thread {
 			host = fast?getDefaultHost():getHost();
 			
 			if(host != null) {
-				pseudo = JOptionPane.showInputDialog(GUIClient.getFrame(), Lang.get("text.pseudo.name"), Lang.get("text.connection.name"), JOptionPane.DEFAULT_OPTION);
+				pseudo = JOptionPane.showInputDialog(GUIClient.FRAME, Lang.get("text.pseudo.name"), Lang.get("text.connection.name"), JOptionPane.DEFAULT_OPTION);
 				if(pseudo != null) {
-					password = JOptionPane.showInputDialog(GUIClient.getFrame(), Lang.get("text.password.name"), Lang.get("text.connection.name"), JOptionPane.DEFAULT_OPTION);
+					password = OptionPane.showPasswordDialog(GUIClient.FRAME, Lang.get("text.password.name"), Lang.get("text.connection.name"), JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
 					if(password != null) {
 						splashConnect.setVisible(true);
 						MainClient.connect(host, pseudo, password);
 					}
 						
 				}
+			}else {
+				int result = OptionPane.showDialog(GUIClient.FRAME, Lang.get("option.nodefaulthost.name"), UIManager.getString("Frame.titleErrorText"), JOptionPane.YES_NO_OPTION, JOptionPane.ERROR_MESSAGE);
+				if(result == JOptionPane.YES_OPTION) {
+					GUIClient.getConfigWindow().show();
+					GUIClient.getConfigWindow().setSelectedTree(ProfileConfig.ID);
+				}
 			}
 			
 		}else {
-			int result = OptionPane.showMessageDialog(GUIClient.getFrame(), Lang.get("option.porterror.name"), UIManager.getString("Frame.titleErrorText"), JOptionPane.YES_NO_OPTION, JOptionPane.ERROR_MESSAGE);
+			int result = OptionPane.showDialog(GUIClient.FRAME, Lang.get("option.porterror.name"), UIManager.getString("Frame.titleErrorText"), JOptionPane.YES_NO_OPTION, JOptionPane.ERROR_MESSAGE);
 			if(result == JOptionPane.YES_OPTION) {
 				GUIClient.getConfigWindow().show();
 				GUIClient.getConfigWindow().setSelectedTree(PortConfig.ID);
@@ -58,9 +65,9 @@ public class Connect extends Thread {
 	}
 	
 	public String getDefaultHost() {
-		int index = GUIClient.config.getInt("profile.main");
+		int index = ClientResources.CONFIG.getInt("profile.main");
 		if(index == -1) {
-			int result = OptionPane.showMessageDialog(GUIClient.getFrame(), Lang.get("option.nodefaulthost.name"),
+			int result = OptionPane.showDialog(GUIClient.FRAME, Lang.get("option.nodefaulthost.name"),
 					UIManager.getString("Frame.titleErrorText"), JOptionPane.YES_NO_OPTION, JOptionPane.ERROR_MESSAGE);
 			
 			if(result == JOptionPane.YES_OPTION) {
@@ -75,7 +82,7 @@ public class Connect extends Thread {
 	}
 	
 	public String getHost() {
-		HostInfo.openInfoDialog(GUIClient.getFrame());
+		HostInfo.openInfoDialog(GUIClient.FRAME);
 		
 		String host = null;
 		while(host == null) {

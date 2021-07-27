@@ -2,10 +2,12 @@ package net.argus.emessage.client.gui;
 
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 
+import net.argus.event.change.ChangeListener;
 import net.argus.gui.TextField;
 import net.argus.system.Network;
-import net.argus.util.ChangeListener;
 
 public class TextFieldPort extends TextField {
 	
@@ -14,16 +16,21 @@ public class TextFieldPort extends TextField {
 	 */
 	private static final long serialVersionUID = 5283450673655876616L;
 	
-	public TextFieldPort(int size) {
-		super(size);
+	public TextFieldPort(int size, String name) {
+		super(size, name);
 		addFocusListener(getDefaultFocusListener());
+		addKeyListener(getKeyListener());
 		addChangeListener(getDefaultChangeListener());
 	}
 	
 	@Override
 	public boolean isError() {
-		getDefaultChangeListener().valueChanged(null);
+		getDefaultFocusListener().focusLost(null);
 		return super.isError();
+	}
+	
+	public ChangeListener getDefaultChangeListener() {
+		return (n) -> getDefaultFocusListener().focusLost(null);
 	}
 	
 	public FocusListener getDefaultFocusListener() {
@@ -34,12 +41,15 @@ public class TextFieldPort extends TextField {
 				else
 					unError();
 			}
-			public void focusGained(FocusEvent e) {unError();}
+			public void focusGained(FocusEvent e) {}
 		};
 	}
 	
-	public ChangeListener getDefaultChangeListener() {
-		return (n) -> getDefaultFocusListener().focusLost(null);
+	private KeyListener getKeyListener() {
+		return new KeyListener() {
+			public void keyTyped(KeyEvent e) {}
+			public void keyReleased(KeyEvent e) {getDefaultFocusListener().focusLost(null);}
+			public void keyPressed(KeyEvent e) {}
+		};
 	}
-
 }

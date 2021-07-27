@@ -8,12 +8,12 @@ import java.net.UnknownHostException;
 
 import javax.swing.JScrollPane;
 
-import net.argus.emessage.ChatDefault;
+import net.argus.emessage.EMessageProperty;
 import net.argus.emessage.client.MainClient;
 import net.argus.emessage.client.event.ChatEvent;
 import net.argus.emessage.client.event.EventChat;
-import net.argus.event.frame.FrameEvent;
-import net.argus.event.frame.FrameListener;
+import net.argus.event.gui.frame.FrameEvent;
+import net.argus.event.gui.frame.FrameListener;
 import net.argus.gui.Button;
 import net.argus.gui.Panel;
 import net.argus.gui.TextField;
@@ -43,17 +43,18 @@ public class PanelChatClient {
 		
 		discussion.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
 		
-		msg = new TextField(0, true);
+		msg = new TextField(0);
+		msg.addKeyListener(msg.getDefaultKeyListener());
 		send = new Button("send");
 		
-		msg.setPreferredSize(new Dimension(GUIClient.getFrame().getSize().width - 200, 25));
+		msg.setPreferredSize(new Dimension(GUIClient.FRAME.getSize().width - 200, 25));
 		
 		GUIClient.addFrameListener(new FrameListener() {
 			@Override
 			public void frameResizing(FrameEvent e) {
-				discussion.setBounds(0, 0, GUIClient.getFrame().getSize().width, 25);
+				discussion.setBounds(0, 0, GUIClient.FRAME.getSize().width, 25);
 				
-				msg.setPreferredSize(new Dimension(GUIClient.getFrame().getSize().width - 200, 25));
+				msg.setPreferredSize(new Dimension(GUIClient.FRAME.getSize().width - 200, 25));
 			}
 			@Override
 			public void frameClosing(FrameEvent e) {}
@@ -82,13 +83,13 @@ public class PanelChatClient {
 		else
 			lastPseudo = null;
 		
-		MainClient.getEvent().startEvent(EventChat.ADD_MESSAGE, new ChatEvent(message, pseudo));
+		MainClient.getEvent().startEvent(EventChat.ADD_MESSAGE, new ChatEvent(message, pseudo, pos));
 	}
 	
 	public void addSystemMessage(String message) {
 		discussion.addInfoBubble(message);
 		
-		MainClient.getEvent().startEvent(EventChat.ADD_MESSAGE, new ChatEvent(message, ChatDefault.DEFAULT_SYSTEM_NAME));
+		MainClient.getEvent().startEvent(EventChat.ADD_MESSAGE, new ChatEvent(message, (String) EMessageProperty.get("DefaultSystemName")));
 	}
 	
 	public void addArrayMessage(int pos, String pseudo, Object[] messages) {

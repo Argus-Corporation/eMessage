@@ -4,6 +4,8 @@ import net.argus.emessage.client.event.ChatEvent;
 import net.argus.emessage.client.event.EventChat;
 import net.argus.emessage.client.gui.GUIClient;
 import net.argus.emessage.client.gui.InfoDialog;
+import net.argus.emessage.client.room.Room;
+import net.argus.emessage.client.room.RoomRegister;
 import net.argus.emessage.pack.ChatPackageType;
 import net.argus.event.net.process.ProcessEvent;
 import net.argus.event.net.process.ProcessListener;
@@ -18,13 +20,23 @@ public class ClientChatProcess implements ProcessListener {
 		
 		MainClient.getEvent().startEvent(EventChat.RECEIVE_MESSAGE, new ChatEvent(pack));
 		if(pack.getType().equals(ChatPackageType.MESSAGE)) {
-			GUIClient.addMessage(Integer.valueOf(pack.getValue("Position")), pack.getValue("Pseudo"), pack.getValue("Message"));	
+			GUIClient.addMessage(Integer.valueOf(pack.getValue("Position")), pack.getValue("Pseudo"), pack.getValue("Message"));
+			
 		}else if(pack.getType().equals(PackageType.INFO)) {
 			InfoDialog info = new InfoDialog();
 			info.addInfo(pack);
 			info.setVisible(true);
+			
 		}else if(pack.getType().equals(PackageType.SYSTEM)) {
 			GUIClient.addSystemMessage(pack.getValue("System-Info"));
+			
+		}else if(pack.getType().equals(ChatPackageType.ROOM)) {
+			Room room = new Room(pack.getValue("Room-Name"), Boolean.valueOf(pack.getValue("Room-Private")));
+			RoomRegister.addRoom(room);
+						
+		}else if(pack.getType().equals(ChatPackageType.ROOM_REMOVE)) {
+			RoomRegister.removeRoom(pack.getValue("Room-Name"));
+			
 		}
 	}
 

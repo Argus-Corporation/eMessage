@@ -33,7 +33,7 @@ public class InfoDialog extends JDialog {
 	}
 	
 	public InfoDialog() {
-		this(GUIClient.getFrame());
+		this(GUIClient.FRAME);
 	}
 	
 	private void addButton() {

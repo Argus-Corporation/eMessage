@@ -1,8 +1,6 @@
 package net.argus.emessage.client.gui.config;
 
 import java.awt.Dimension;
-import java.awt.event.WindowEvent;
-import java.awt.event.WindowListener;
 
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
@@ -10,11 +8,15 @@ import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 
 import net.argus.cjson.CJSON;
+import net.argus.emessage.client.ClientResources;
 import net.argus.emessage.client.gui.GUIClient;
-import net.argus.event.tree.TreeEvent;
-import net.argus.event.tree.TreeListener;
+import net.argus.event.gui.frame.FrameEvent;
+import net.argus.event.gui.frame.FrameListener;
+import net.argus.event.gui.tree.TreeEvent;
+import net.argus.event.gui.tree.TreeListener;
 import net.argus.gui.OptionPane;
 import net.argus.gui.Panel;
+import net.argus.gui.frame.Frame;
 import net.argus.gui.tree.CardinalTreeNode;
 import net.argus.gui.tree.Tree;
 import net.argus.lang.Lang;
@@ -22,7 +24,7 @@ import net.argus.util.ThreadManager;
 
 public class Config {
 
-	private JFrame fen;
+	private Frame fen;
 	private JSplitPane split;
 	
 	private JScrollPane scrollPanTree;
@@ -40,12 +42,14 @@ public class Config {
 	}
 
 	private void initComponent() {
-		fen = new JFrame("Config");
+		fen = new Frame("Config");
+		fen.setFrameIconImage(ClientResources.ICON);
+		
 		fen.setResizable(false);
 		fen.setSize(810, 360);
-		fen.setIconImage(GUIClient.icon16.getImage());
+		fen.setIconImage(ClientResources.ICON.getImage());
 		fen.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
-		fen.addWindowListener(getFrameListener());
+		fen.addFrameListener(getFrameListener());
 		
 		scrollPanTree = getScrollTree();
 		optionPanel = new Panel();
@@ -53,7 +57,7 @@ public class Config {
 		configTree.addTreeListener(getTreeListener());
 		
 		split = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, scrollPanTree, optionPanel);
-		fen.add(split);
+		fen.setContentPane(split);
 	}
 	
 	public void setSelectedTree(int id) {
@@ -65,7 +69,7 @@ public class Config {
 
 			@Override
 			public void treeNodeSelected(TreeEvent e) {
-				getFrameListener().windowClosing(null);
+				getFrameListener().frameClosing(null);
 				
 				Object no = e.getPath().getLastPathComponent();
 				
@@ -91,13 +95,23 @@ public class Config {
 		};
 	}
 	
-	private WindowListener getFrameListener() {
-		return new WindowListener() {
-			public void windowOpened(WindowEvent e) {}
-			public void windowIconified(WindowEvent e) {}
-			public void windowDeiconified(WindowEvent e) {}
-			public void windowDeactivated(WindowEvent e) {}
-			public void windowClosing(WindowEvent e) {
+	private FrameListener getFrameListener() {
+		return new FrameListener() {
+			
+			@Override
+			public void frameResizing(FrameEvent e) {
+				// TODO Auto-generated method stub
+				
+			}
+			
+			@Override
+			public void frameMinimalized(FrameEvent e) {
+				// TODO Auto-generated method stub
+				
+			}
+			
+			@Override
+			public void frameClosing(FrameEvent e) {
 				if(confManager != null) {
 					int result = confManager.apply();
 					
@@ -106,13 +120,11 @@ public class Config {
 						ThreadManager.stop(Thread.currentThread());
 					}
 				}
+				
 			}
-			public void windowClosed(WindowEvent e) {}
-			public void windowActivated(WindowEvent e) {}
-			
-			private Runnable getErrorRun(WindowEvent e) {
+			private Runnable getErrorRun(FrameEvent e) {
 				return () -> {
-					int result = OptionPane.showConfirmDialog(fen, Lang.get("config.errorinfo.name"), "Error", JOptionPane.OK_CANCEL_OPTION, JOptionPane.ERROR_MESSAGE);
+					int result = OptionPane.showDialog(fen, Lang.get("config.errorinfo.name"), "Error", JOptionPane.OK_CANCEL_OPTION, JOptionPane.ERROR_MESSAGE);
 					if(result == JOptionPane.YES_OPTION) {
 						if(e != null)
 							fen.setVisible(false);
@@ -136,7 +148,8 @@ public class Config {
 	}
 
 	public void show() {
-		fen.setLocationRelativeTo(GUIClient.getFrame());
+		if(!fen.isVisible())
+			fen.setLocationRelativeTo(GUIClient.FRAME);
 		fen.setVisible(true);
 	}
 

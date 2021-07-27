@@ -10,7 +10,8 @@ import java.util.List;
 
 import javax.swing.DefaultComboBoxModel;
 
-import net.argus.emessage.client.gui.GUIClient;
+import net.argus.emessage.client.ClientResources;
+import net.argus.emessage.client.MainClient;
 import net.argus.emessage.client.gui.HostInfo;
 import net.argus.emessage.client.gui.TextFieldHost;
 import net.argus.emessage.client.gui.TextFieldName;
@@ -29,7 +30,7 @@ public class ProfileConfig extends ConfigManager {
 	private TextFieldName name;
 	private TextFieldHost host;
 	
-	private Button remove, create, apply;
+	private Button remove, create;
 	
 	private CheckBox main;
 	
@@ -38,7 +39,7 @@ public class ProfileConfig extends ConfigManager {
 	public static final int ID = 2;
 
 	public ProfileConfig() {
-		super(ID);
+		super(ID, MainClient.getClientInstance());
 		listModel = new DefaultComboBoxModel<Profile>();
 	}
 
@@ -80,8 +81,10 @@ public class ProfileConfig extends ConfigManager {
 		Panel north = new Panel();
 		Panel center = new Panel();
 		
-		name = new TextFieldName(10);
-		host = new TextFieldHost(10);
+		name = new TextFieldName(10, "name");
+		host = new TextFieldHost(10, "host");
+		
+		name.setPlaceholder("");
 		
 		main = new CheckBox("main");
 		
@@ -106,7 +109,6 @@ public class ProfileConfig extends ConfigManager {
 		
 		remove = new Button("remove");
 		create = new Button("create");
-		apply = new Button("apply");
 		
 		remove.addActionListener(getRemoveActionListener());
 		create.addActionListener(getCreateActionListener());
@@ -167,15 +169,6 @@ public class ProfileConfig extends ConfigManager {
 		};
 	}
 	
-	private ActionListener getApplyActionListener() {
-		return e -> {
-			int result = apply();
-			if(result == -1) {
-				
-			}
-		};
-	}
-	
 	private ActionListener getListActionListener() {
 		return e -> {
 			old = true;
@@ -187,14 +180,14 @@ public class ProfileConfig extends ConfigManager {
 			name.setText(nameText!=null?nameText.toString():"");
 			host.setText(HostInfo.getProfileConfig().getString("profile" + index + ".ip"));
 			
-			int mainProfile = GUIClient.config.getInt("profile.main");
+			int mainProfile = ClientResources.CONFIG.getInt("profile.main");
 			main.setSelected(list.getSelectedIndex() == mainProfile);
 		};
 	}
 	
 	private ActionListener getMainActionListener() {
 		return e -> {
-			int defIndex = GUIClient.config.getInt("profile.main");
+			int defIndex = ClientResources.CONFIG.getInt("profile.main");
 			
 			if(list.getSelectedIndex() == defIndex)
 				main.setSelected(true);
@@ -282,7 +275,7 @@ public class ProfileConfig extends ConfigManager {
 				add(index);
 			
 			if(main.isSelected())
-				try {GUIClient.config.setKey("profile.main", index);}
+				try {ClientResources.CONFIG.setKey("profile.main", index);}
 				catch (IOException e) {e.printStackTrace();}
 			
 			apply.setEnabled(false);
@@ -293,5 +286,8 @@ public class ProfileConfig extends ConfigManager {
 		
 		return VALID_APPLY;
 	}
+	
+	@Override
+	public void setDefault() {}
 	
 }

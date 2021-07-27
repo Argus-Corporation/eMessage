@@ -1,11 +1,25 @@
 package net.argus.emessage;
 
+import java.io.IOException;
+
+import net.argus.emessage.client.ClientResources;
+
 public class ChatDefault{
 	
-	public static final String DEFAULT_SYSTEM_NAME = "System";
+	public static boolean openUtilityOnConnection() {
+		return isTrue("open.utility", "true");
+	}
 	
-	public static final int DEFAULT_DEBUG_PORT = 11036;
+	public static boolean confirmConnectRoom() {
+		return isTrue("join.confirm", "true");
+	}
 	
-	public static final int DEFAULT_PORT = 11066;
+	private static boolean isTrue(String key, String defaultValue) {
+		if(!ClientResources.CONFIG.containsKey(key))
+			try {ClientResources.CONFIG.setKey(key, defaultValue);}
+			catch(IOException e) {}
+		
+		return ClientResources.getBooleanConfig(key);
+	}
 
 }
