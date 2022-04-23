@@ -4,7 +4,7 @@ import java.awt.BorderLayout;
 import java.awt.event.ActionListener;
 import java.io.IOException;
 
-import net.argus.emessage.ChatDefault;
+import net.argus.emessage.EMessageDefault;
 import net.argus.emessage.EMessageProperty;
 import net.argus.emessage.client.ClientResources;
 import net.argus.emessage.client.gui.about.AboutDialog;
@@ -21,7 +21,7 @@ public class GUIClient {
 	private static Config configWindow;
 	
 	public static final MenuBarClient MENU_BAR = new MenuBarClient();
-	public static final PanelChatClient CHAT_PANEL = new PanelChatClient();
+	public static final EMessagePanelClient CHAT_PANEL = new EMessagePanelClient();
 	
 	public static final AboutDialog ABOUT = new AboutDialog();
 	
@@ -46,7 +46,7 @@ public class GUIClient {
 		
 		MENU_BAR.getUtility().setEnabled(true);
 		
-		if(ChatDefault.openUtilityOnConnection())
+		if(EMessageDefault.openUtilityOnConnection())
 			UTILITY.show();
 	}
 	
@@ -86,12 +86,12 @@ public class GUIClient {
 	public static void addSendAction(ActionListener actionListener) {CHAT_PANEL.getSendButton().addActionListener(actionListener);}
 	
 	public static void addMessage(int pos, String pseudo, String message) {CHAT_PANEL.addMessage(pos, pseudo, message);}
-	public static void addMessage(String pseudo, String message) {CHAT_PANEL.addMessage(PanelChatClient.YOU, pseudo, message);}
-	public static void addMessage(String message) {CHAT_PANEL.addMessage(PanelChatClient.ME, "", message);}
+	public static void addMessage(String pseudo, String message) {CHAT_PANEL.addMessage(EMessagePanelClient.YOU, pseudo, message);}
+	public static void addMessage(String message) {CHAT_PANEL.addMessage(EMessagePanelClient.ME, "", message);}
 	public static void addSystemMessage(String message) {CHAT_PANEL.addSystemMessage(message);}
 	
 	public static void addArrayMessage(Object[] messages) {
-		CHAT_PANEL.addArrayMessage(PanelChatClient.YOU, (String) EMessageProperty.get("DefaultSystemName"), messages);
+		CHAT_PANEL.addArrayMessage(EMessagePanelClient.YOU, (String) EMessageProperty.get("DefaultSystemName"), messages);
 	}
 	
 	public static void setVisible(boolean v) {FRAME.setVisible(v);}

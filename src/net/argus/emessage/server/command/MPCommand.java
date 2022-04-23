@@ -2,7 +2,7 @@ package net.argus.emessage.server.command;
 
 import java.io.IOException;
 
-import net.argus.emessage.pack.ChatPackagePrefab;
+import net.argus.emessage.pack.EMessagePackagePrefab;
 import net.argus.net.pack.PackagePrefab;
 import net.argus.net.server.ServerProcess;
 import net.argus.net.server.command.Command;
@@ -32,8 +32,8 @@ public class MPCommand extends Command {
 			return;
 		}
 		
-		process.send(ChatPackagePrefab.genServerMessagePackage(message, "-> " + client.getCardinalSocket().getProfile().getName(), ChatPackagePrefab.RIGHT));
-		client.send(ChatPackagePrefab.genServerMessagePackage(message, "-> " + process.getCardinalSocket().getProfile().getName()));
+		process.send(EMessagePackagePrefab.genServerMessagePackage(message, "-> " + client.getCardinalSocket().getProfile().getName(), EMessagePackagePrefab.RIGHT));
+		client.send(EMessagePackagePrefab.genServerMessagePackage(message, "-> " + process.getCardinalSocket().getProfile().getName()));
 		
 	}
 

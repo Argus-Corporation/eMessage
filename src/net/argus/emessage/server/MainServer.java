@@ -2,12 +2,12 @@ package net.argus.emessage.server;
 
 import java.io.IOException;
 
-import net.argus.emessage.Chat;
+import net.argus.emessage.EMessage;
 import net.argus.emessage.EMessageProperty;
-import net.argus.emessage.pack.ChatPackagePrefab;
-import net.argus.emessage.pack.ChatPackageType;
+import net.argus.emessage.pack.EMessagePackagePrefab;
+import net.argus.emessage.pack.EMessagePackageType;
 import net.argus.emessage.proxy.MainProxy;
-import net.argus.emessage.server.command.ChatCommands;
+import net.argus.emessage.server.command.EMessageCommands;
 import net.argus.event.net.server.ServerEvent;
 import net.argus.event.net.server.ServerListener;
 import net.argus.exception.InstanceException;
@@ -59,8 +59,8 @@ public class MainServer extends CardinalProgram {
 			catch(IOException e) {Error.createErrorFileLog(e); Debug.log("Error when create proxy server", Info.ERROR);}
 		}
 		
-		ChatPackageType.init();
-		ChatCommands.init();
+		EMessagePackageType.init();
+		EMessageCommands.init();
 		
 		try {
 			monitoring = new MonitoringServer(8495);
@@ -73,7 +73,7 @@ public class MainServer extends CardinalProgram {
 		serv = new Server(size, port);
 		serv.addServerListener(getServerListener());
 		
-		ServerProcessEvent.addProcessListener(new ServerChatProcess());
+		ServerProcessEvent.addProcessListener(new EMessageServerProcess());
 		
 		PluginRegister.init(new PluginEvent(MainServer.class));
 		
@@ -113,7 +113,7 @@ public class MainServer extends CardinalProgram {
 	public static void sendNewRoom(Room newRoom) {
 		for(Room r : RoomRegister.getRooms()) {
 			for(ServerProcess p : r.getClients()) {
-				try {p.send(ChatPackagePrefab.genRoomPackage(newRoom));}
+				try {p.send(EMessagePackagePrefab.genRoomPackage(newRoom));}
 				catch(IOException e) {e.printStackTrace();}
 			}
 		}
@@ -122,7 +122,7 @@ public class MainServer extends CardinalProgram {
 	public static void sendCloseRoom(Room newRoom) {
 		for(Room r : RoomRegister.getRooms()) {
 			for(ServerProcess p : r.getClients()) {
-				try {p.send(ChatPackagePrefab.genCloseRoomPackage(newRoom));}
+				try {p.send(EMessagePackagePrefab.genCloseRoomPackage(newRoom));}
 				catch(IOException e) {e.printStackTrace();}
 			}
 		}
@@ -130,7 +130,7 @@ public class MainServer extends CardinalProgram {
 	
 	public static void sendRoom(ServerProcess p) {
 		for(Room r : RoomRegister.getRooms())
-			try {p.send(ChatPackagePrefab.genRoomPackage(r));}
+			try {p.send(EMessagePackagePrefab.genRoomPackage(r));}
 			catch(IOException e) {e.printStackTrace();}
 	}
 
@@ -164,6 +164,11 @@ public class MainServer extends CardinalProgram {
 				
 				sendRoom(p);
 			}
+
+			@Override
+			public void stopAction(ServerEvent e) {
+				
+			}
 		};
 	}
 	
@@ -185,7 +190,7 @@ public class MainServer extends CardinalProgram {
 		InitializationSystem.initSystem(args, false);
 		InitializationPlugin.register();
 		
-		Debug.log("Program version: " + Chat.VERSION);
+		Debug.log("Program version: " + EMessage.VERSION);
 				
 		PluginRegister.preInit(new PluginEvent(MainServer.class));
 		MainServer.init();

@@ -4,7 +4,7 @@ import java.io.IOException;
 
 import net.argus.emessage.client.ClientResources;
 
-public class ChatDefault{
+public class EMessageDefault {
 	
 	public static boolean openUtilityOnConnection() {
 		return isTrue("open.utility", "true");

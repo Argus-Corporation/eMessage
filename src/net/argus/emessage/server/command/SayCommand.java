@@ -2,7 +2,7 @@ package net.argus.emessage.server.command;
 
 import java.io.IOException;
 
-import net.argus.emessage.pack.ChatPackagePrefab;
+import net.argus.emessage.pack.EMessagePackagePrefab;
 import net.argus.net.server.ServerProcess;
 import net.argus.net.server.command.Command;
 import net.argus.net.server.command.structure.Structure;
@@ -16,8 +16,8 @@ public class SayCommand extends Command {
 
 	@Override
 	protected void run(StructuredCommand com, ServerProcess process) throws IOException {
-		process.sendToAll(ChatPackagePrefab.genServerMessagePackage((String) com.get(0), process.getCardinalSocket().getProfile().getName()));
-		process.send(ChatPackagePrefab.genServerMessagePackage((String) com.get(0), "-> all", ChatPackagePrefab.RIGHT));
+		process.sendToAll(EMessagePackagePrefab.genServerMessagePackage((String) com.get(0), process.getCardinalSocket().getProfile().getName()));
+		process.send(EMessagePackagePrefab.genServerMessagePackage((String) com.get(0), "-> all", EMessagePackagePrefab.RIGHT));
 	}
 
 }
