@@ -183,6 +183,10 @@ public class MainServer extends CardinalProgram {
 			}
 		};
 	}
+	
+	public static void addServerListener(ServerListener listener) {serv.addServerListener(listener);}
+	
+	public static Server getServer() {return serv;}
 		
 	public static void stop() {UserSystem.exit(0);}
 	
