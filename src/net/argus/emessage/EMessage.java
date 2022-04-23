@@ -12,7 +12,7 @@ import net.argus.util.debug.Debug;
 
 public class EMessage {
 	
-	public static final Version VERSION = new Version("1.4.1a");
+	public static final Version VERSION = new Version("1.4.1");
 	public static final String NAME = "eMessage";
 	public static final String COPYRIGHT = "© 2022 Argus";
 	

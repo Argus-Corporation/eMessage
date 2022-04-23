@@ -31,7 +31,7 @@ public class ClientResources {
 	public static final Audio SEND_MESSAGE =  new Audio(FileManager.getMainPath() + "/res/sound/send_message.wav");
 	public static final Audio NEW_MESSAGE =  new Audio(FileManager.getMainPath() + "/res/sound/new_message.wav");
 	
-	public static final CJSON treeConfig = CJSONParser.getCJSON(new CJSONFile("config", "bin"));
+	public static final CJSON TREE_CONFIG = CJSONParser.getCJSON(new CJSONFile("config", "bin"));
 	
 	public static void playAudio(String path) {
 		new Audio(path).play();

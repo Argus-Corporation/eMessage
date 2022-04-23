@@ -65,7 +65,7 @@ public class GUIClient {
 	
 	public static Config getConfigWindow() {
 		if(configWindow == null)
-			configWindow = new Config(ClientResources.treeConfig);
+			configWindow = new Config(ClientResources.TREE_CONFIG);
 			
 		return configWindow;
 	}
