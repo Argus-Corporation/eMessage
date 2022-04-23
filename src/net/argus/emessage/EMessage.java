@@ -10,11 +10,11 @@ import net.argus.net.server.Server;
 import net.argus.util.Version;
 import net.argus.util.debug.Debug;
 
-public class Chat {
+public class EMessage {
 	
-	public static final Version VERSION = new Version("1.4");
+	public static final Version VERSION = new Version("1.4.1");
 	public static final String NAME = "eMessage";
-	public static final String COPYRIGHT = "© 2021 Argus";
+	public static final String COPYRIGHT = "© 2022 Argus";
 	
 	public static String[] getInfo() {
 		return new String[] {

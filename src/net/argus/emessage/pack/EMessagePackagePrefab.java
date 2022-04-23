@@ -5,13 +5,13 @@ import net.argus.net.pack.Package;
 import net.argus.net.pack.PackageBuilder;
 import net.argus.net.server.room.Room;
 
-public class ChatPackagePrefab {
+public class EMessagePackagePrefab {
 	
 	public static final int LEFT = BubblePanel.LEFT;
 	public static final int RIGHT = BubblePanel.RIGHT;
 	
 	public static Package genMessagePackage(String message) {
-		PackageBuilder builder = new PackageBuilder(ChatPackageType.MESSAGE);
+		PackageBuilder builder = new PackageBuilder(EMessagePackageType.MESSAGE);
 		
 		builder.addKey("Message", message);
 		
@@ -23,7 +23,7 @@ public class ChatPackagePrefab {
 	}
 	
 	public static Package genServerMessagePackage(String message, String pseudo, int pos) {
-		PackageBuilder builder = new PackageBuilder(ChatPackageType.MESSAGE);
+		PackageBuilder builder = new PackageBuilder(EMessagePackageType.MESSAGE);
 		
 		builder.addKey("Message", message);
 		builder.addKey("Pseudo", pseudo);
@@ -33,7 +33,7 @@ public class ChatPackagePrefab {
 	}
 	
 	public static Package genRoomPackage(Room room) {
-		PackageBuilder builder = new PackageBuilder(ChatPackageType.ROOM);
+		PackageBuilder builder = new PackageBuilder(EMessagePackageType.ROOM);
 		
 		builder.addKey("Room-Name", room.getName());
 		builder.addKey("Room-Private", room.isPrivate());
@@ -42,7 +42,7 @@ public class ChatPackagePrefab {
 	}
 	
 	public static Package genCloseRoomPackage(Room room) {
-		PackageBuilder builder = new PackageBuilder(ChatPackageType.ROOM_REMOVE);
+		PackageBuilder builder = new PackageBuilder(EMessagePackageType.ROOM_REMOVE);
 		
 		builder.addKey("Room-Name", room.getName());
 		

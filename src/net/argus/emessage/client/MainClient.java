@@ -5,15 +5,15 @@ import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.IOException;
 
-import net.argus.emessage.Chat;
+import net.argus.emessage.EMessage;
 import net.argus.emessage.client.event.ChatEvent;
 import net.argus.emessage.client.event.ChatListener;
 import net.argus.emessage.client.event.EventChat;
 import net.argus.emessage.client.gui.Connect;
+import net.argus.emessage.client.gui.EMessagePanelClient;
 import net.argus.emessage.client.gui.GUIClient;
-import net.argus.emessage.client.gui.PanelChatClient;
-import net.argus.emessage.pack.ChatPackagePrefab;
-import net.argus.emessage.pack.ChatPackageType;
+import net.argus.emessage.pack.EMessagePackagePrefab;
+import net.argus.emessage.pack.EMessagePackageType;
 import net.argus.event.gui.frame.FrameEvent;
 import net.argus.event.gui.frame.FrameListener;
 import net.argus.event.net.socket.SocketEvent;
@@ -46,14 +46,14 @@ import net.argus.util.debug.Debug;
 @Program(instanceName = "client")
 public class MainClient extends CardinalProgram {
 	
-	private static ChatClient client;
+	private static EMessageClient client;
 	
 	private static EventChat event = new EventChat();
 	
 	private static Instance instanceClient;
 	
 	public static void init() {
-		ChatPackageType.init();
+		EMessagePackageType.init();
 		ClientResources.init();
 		GUIClient.init();
 
@@ -124,7 +124,7 @@ public class MainClient extends CardinalProgram {
 					if(com)
 						client.send(PackagePrefab.genCommandPackage(msg));
 					else
-						client.send(ChatPackagePrefab.genMessagePackage(msg));
+						client.send(EMessagePackagePrefab.genMessagePackage(msg));
 					
 					event.startEvent(EventChat.SEND_MESSAGE, new ChatEvent(msg, null));
 					
@@ -214,7 +214,7 @@ public class MainClient extends CardinalProgram {
 			
 			@Override
 			public void addMessage(ChatEvent e) {
-				if(e.getPos() == PanelChatClient.YOU)
+				if(e.getPos() == EMessagePanelClient.YOU)
 					ClientResources.NEW_MESSAGE.play();
 			}
 		};
@@ -232,10 +232,10 @@ public class MainClient extends CardinalProgram {
 	
 	/**----**/
 	public static void connect(String host, String pseudo, String password) {
-		client = new ChatClient(host, ClientResources.CONFIG.getInt("port"), pseudo);
+		client = new EMessageClient(host, ClientResources.CONFIG.getInt("port"), pseudo);
 		
 		client.addSocketListener(getSocketListener());
-		client.addProcessListener(new ClientChatProcess());
+		client.addProcessListener(new EMessageClientProcess());
 
 		try {client.connect(password);}
 		catch(IOException e) {}
@@ -258,7 +258,7 @@ public class MainClient extends CardinalProgram {
 			
 			Debug.addBlackList(ThreadManager.THREAD_MANAGER);
 	
-			Debug.log("Program version: " + Chat.VERSION);
+			Debug.log("Program version: " + EMessage.VERSION);
 			Debug.log("Client version: " + Client.VERSION);
 
 			instanceClient = getInstance();
@@ -270,10 +270,10 @@ public class MainClient extends CardinalProgram {
 			
 			CSSEngine.run("client", "bin/css");
 			
-			PluginRegister.preInit(new PluginEvent(Chat.getInfo()));
+			PluginRegister.preInit(new PluginEvent(EMessage.getInfo()));
 
 			MainClient.init();
-		}catch(Throwable e) {Error.createErrorFileLog(e); e.printStackTrace(); OptionPane.showErrorDialog(null, Chat.NAME, e); stop();};
+		}catch(Throwable e) {Error.createErrorFileLog(e); e.printStackTrace(); OptionPane.showErrorDialog(null, EMessage.NAME, e); stop();};
 	}
 	
 }

@@ -13,7 +13,7 @@ import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.border.Border;
 
-import net.argus.emessage.Chat;
+import net.argus.emessage.EMessage;
 import net.argus.emessage.client.ClientResources;
 import net.argus.emessage.client.MainClient;
 import net.argus.emessage.client.gui.GUIClient;
@@ -87,7 +87,7 @@ public class AboutDialog extends DialogComponent implements GUI {
 		eastPan.add(dbgVersion);
 		
 		Panel southPan = new Panel();
-		southPan.add(new JLabel(Chat.COPYRIGHT));
+		southPan.add(new JLabel(EMessage.COPYRIGHT));
 		
 		northPan.add(BorderLayout.WEST, westPan);
 		northPan.add(BorderLayout.EAST, eastPan);
@@ -152,7 +152,7 @@ public class AboutDialog extends DialogComponent implements GUI {
 	@Override
 	public void setText() {
 		setTitle(Lang.get("menuitem.about.name"));
-		version.setText(Lang.get("text.version.name") + ": " + Chat.VERSION);
+		version.setText(Lang.get("text.version.name") + ": " + EMessage.VERSION);
 		
 		if(UserSystem.getManifest() != null)
 			dbgVersion.setText(Lang.get("text.dbgversion.name") + ": " + UserSystem.getCurrentStringVersion());

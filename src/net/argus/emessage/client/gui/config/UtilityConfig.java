@@ -6,7 +6,7 @@ import java.io.IOException;
 
 import javax.swing.BoxLayout;
 
-import net.argus.emessage.ChatDefault;
+import net.argus.emessage.EMessageDefault;
 import net.argus.emessage.client.ClientResources;
 import net.argus.emessage.client.MainClient;
 import net.argus.gui.CheckBox;
@@ -39,8 +39,8 @@ public class UtilityConfig extends ConfigManager {
 		Panel center = new Panel();
 		center.setLayout(new BoxLayout(center, BoxLayout.Y_AXIS));
 		
-		openOnConnect.setSelected(ChatDefault.openUtilityOnConnection());
-		confirm.setSelected(ChatDefault.confirmConnectRoom());
+		openOnConnect.setSelected(EMessageDefault.openUtilityOnConnection());
+		confirm.setSelected(EMessageDefault.confirmConnectRoom());
 		
 		openOnConnect.addItemListener(getCheckBoxChangeListener());
 		confirm.addItemListener(getCheckBoxChangeListener());

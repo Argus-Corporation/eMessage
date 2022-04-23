@@ -15,7 +15,7 @@ import javax.swing.JScrollPane;
 import javax.swing.ListSelectionModel;
 import javax.swing.event.ListSelectionListener;
 
-import net.argus.emessage.ChatDefault;
+import net.argus.emessage.EMessageDefault;
 import net.argus.emessage.client.MainClient;
 import net.argus.emessage.client.room.Room;
 import net.argus.emessage.client.room.RoomRegister;
@@ -177,7 +177,7 @@ public class RoomUtility extends UtilityTab {
 			password = OptionPane.showPasswordDialog(null, Lang.get("text.roompass.name"), Lang.get("text.password.name"), JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
 			if(password == null || password.equals(""))
 				return;
-		}else if(ChatDefault.confirmConnectRoom()) {
+		}else if(EMessageDefault.confirmConnectRoom()) {
 			int result = OptionPane.showDialog(null, Lang.get("text.consentjoinroom.name"), Lang.get("text.room.name"), JOptionPane.YES_NO_OPTION, JOptionPane.INFORMATION_MESSAGE);
 			
 			if(result != JOptionPane.YES_OPTION)

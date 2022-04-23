@@ -12,11 +12,11 @@ import net.argus.net.pack.Package;
 import net.argus.net.socket.CardinalSocket;
 import net.argus.net.socket.CryptoSocket;
 
-public class ChatClient {
+public class EMessageClient {
 		
 	private Client client;
 	
-	public ChatClient(String host, int port, String pseudo) {
+	public EMessageClient(String host, int port, String pseudo) {
 		client = new Client(host, port, new CryptoSocket(false));
 		
 		client.getProfile().setName(pseudo);

@@ -2,7 +2,7 @@ package net.argus.emessage.pack;
 
 import net.argus.net.pack.PackageType;
 
-public class ChatPackageType {
+public class EMessagePackageType {
 	
 	public static final PackageType MESSAGE = new PackageType("message", 2);
 	public static final PackageType ROOM = new PackageType("room", 3);

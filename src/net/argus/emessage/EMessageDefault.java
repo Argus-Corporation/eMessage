@@ -4,7 +4,7 @@ import java.io.IOException;
 
 import net.argus.emessage.client.ClientResources;
 
-public class ChatDefault{
+public class EMessageDefault {
 	
 	public static boolean openUtilityOnConnection() {
 		return isTrue("open.utility", "true");
@@ -14,7 +14,7 @@ public class ChatDefault{
 		return isTrue("join.confirm", "true");
 	}
 	
-	private static boolean isTrue(String key, String defaultValue) {
+	public static boolean isTrue(String key, String defaultValue) {
 		if(!ClientResources.CONFIG.containsKey(key))
 			try {ClientResources.CONFIG.setKey(key, defaultValue);}
 			catch(IOException e) {}
