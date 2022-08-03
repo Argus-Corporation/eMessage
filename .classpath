@@ -2,13 +2,9 @@
 <classpath>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.8"/>
 	<classpathentry kind="src" path="src"/>
-	<classpathentry kind="lib" path="/Cardinal-System/build/libs/Cardinal-System.jar" sourcepath="/Cardinal-System/src/main">
-		<attributes>
-			<attribute name="org.eclipse.jdt.launching.CLASSPATH_ATTR_LIBRARY_PATH_ENTRY" value="Cardinal-System/src/main/resources/natives"/>
-		</attributes>
-	</classpathentry>
-	<classpathentry kind="lib" path="D:/Django/Document 1/Java/lib/Monitoring.jar"/>
-	<classpathentry kind="lib" path="D:/Django/Document 1/Java/lib/Launcher.jar"/>
-	<classpathentry kind="lib" path="D:/Django/Document 1/Java/lib/Cardinal/Plugin/Cardinal-Plugin.jar" sourcepath="/Cardinal-Plugin/src"/>
+	<classpathentry kind="lib" path="lib/Cardinal-Plugin.jar" sourcepath="C:/Users/malas/Documents/Java/Cardinal/Cardinal-Plugin/src"/>
+	<classpathentry kind="lib" path="lib/Cardinal-System.jar" sourcepath="C:/Users/malas/Documents/Java/Cardinal/Cardinal-System/src"/>
+	<classpathentry kind="lib" path="lib/Launcher.jar"/>
+	<classpathentry kind="lib" path="lib/Monitoring.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

@@ -75,6 +75,7 @@ public class MainClient extends CardinalProgram {
 		PluginRegister.init(new PluginEvent(MainClient.class));
 				
 		InitializationSplash.getSplash().exit();
+
 		while(!InitializationSplash.getSplash().isFinnish())
 			GUIClient.setVisible(false);
 			
