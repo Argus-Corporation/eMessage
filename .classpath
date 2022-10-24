@@ -3,7 +3,7 @@
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.8"/>
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="lib" path="lib/Cardinal-Plugin.jar" sourcepath="C:/Users/malas/Documents/Java/Cardinal/Cardinal-Plugin/src"/>
-	<classpathentry kind="lib" path="lib/Cardinal-System.jar" sourcepath="C:/Users/malas/Documents/Java/Cardinal/Cardinal-System/src"/>
+	<classpathentry kind="lib" path="lib/Cardinal-System.jar" sourcepath="D:/Django/Documents/Java/Cardinal/Cardinal-System/src"/>
 	<classpathentry kind="lib" path="lib/Launcher.jar"/>
 	<classpathentry kind="lib" path="lib/Monitoring.jar"/>
 	<classpathentry kind="output" path="bin"/>

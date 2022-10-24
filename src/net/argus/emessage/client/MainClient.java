@@ -258,7 +258,7 @@ public class MainClient extends CardinalProgram {
 			InitializationPlugin.register();
 			
 			Debug.addBlackList(ThreadManager.THREAD_MANAGER);
-	
+
 			Debug.log("Program version: " + EMessage.VERSION);
 			Debug.log("Client version: " + Client.VERSION);
 
