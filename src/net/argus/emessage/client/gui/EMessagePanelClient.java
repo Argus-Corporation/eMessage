@@ -17,19 +17,18 @@ import net.argus.event.gui.frame.FrameListener;
 import net.argus.gui.Button;
 import net.argus.gui.Panel;
 import net.argus.gui.TextField;
-import net.argus.gui.bubble.BubblePanel;
-import net.argus.gui.bubble.BubbleScrollPane;
+import net.argus.emessage.api.ui.bubble.BubbleScrollPane;
+import net.argus.emessage.api.ui.bubble.Type;
 
 public class EMessagePanelClient {
 	
-	public static final int ME = BubblePanel.RIGHT;
-	public static final int YOU = BubblePanel.LEFT;
+	public static final int ME = Type.USER;
+	public static final int YOU = Type.FRIEND;
 	
 	private BubbleScrollPane discussion;
 	private TextField msg;
 	private Button send;
-	
-	private String lastPseudo;
+
 	
 	public Panel getChatPanel() throws UnknownHostException, IOException {
 		Panel main = new Panel();
@@ -37,9 +36,7 @@ public class EMessagePanelClient {
 		
 		Panel south = new Panel();
 		
-		discussion = new BubbleScrollPane();
-		discussion.setIndexColorRight(0);
-		discussion.setIndexColorLeft(1);
+		discussion = new BubbleScrollPane(Type.DARK);
 		
 		discussion.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
 		
@@ -72,22 +69,13 @@ public class EMessagePanelClient {
 	}
 	
 	public void addMessage(int pos, String pseudo, String message) {
-		if(lastPseudo != null && lastPseudo.equals(pseudo) && pos == YOU)
-			discussion.addBubble(pos, message);
-		else
-			discussion.addBubble(pos, message, pseudo);
-			
-		
-		if(pseudo != null && !pseudo.equals(""))
-			lastPseudo = pseudo;
-		else
-			lastPseudo = null;
+		discussion.addBubble(message, pseudo, pos);
 		
 		MainClient.getEvent().startEvent(EventChat.ADD_MESSAGE, new ChatEvent(message, pseudo, pos));
 	}
 	
 	public void addSystemMessage(String message) {
-		discussion.addInfoBubble(message);
+		discussion.addBubble(message, (String) EMessageProperty.get("DefaultSystemName"), Type.CENTER);
 		
 		MainClient.getEvent().startEvent(EventChat.ADD_MESSAGE, new ChatEvent(message, (String) EMessageProperty.get("DefaultSystemName")));
 	}
@@ -100,7 +88,7 @@ public class EMessagePanelClient {
 		addMessage(pos, pseudo, message);
 	}
 	
-	public void clearMessage() {discussion.clear(); lastPseudo = null;}
+	public void clearMessage() {discussion.clear();}
 	
 	public TextField getTextField() {return msg;}
 	public Button getSendButton() {return send;}

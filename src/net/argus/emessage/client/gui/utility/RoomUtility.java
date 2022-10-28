@@ -5,6 +5,7 @@ import java.awt.Dimension;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.io.IOException;
 
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
@@ -25,6 +26,7 @@ import net.argus.gui.OptionPane;
 import net.argus.gui.Panel;
 import net.argus.gui.TextArea;
 import net.argus.lang.Lang;
+import net.argus.util.debug.Debug;
 
 public class RoomUtility extends UtilityTab {
 	
@@ -184,7 +186,11 @@ public class RoomUtility extends UtilityTab {
 				return;
 		}
 		
-		MainClient.joinRoom(room.getName(), password);
+		try {
+			MainClient.joinRoom(room.getName(), password);
+		}catch(IOException e) {
+			Debug.log("Error to join room \"" + room.getName() + "\"");
+		}
 	}
 	
 	public void addRoom(Room room) {

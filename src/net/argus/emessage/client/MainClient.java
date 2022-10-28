@@ -12,7 +12,6 @@ import net.argus.emessage.client.event.EventChat;
 import net.argus.emessage.client.gui.Connect;
 import net.argus.emessage.client.gui.EMessagePanelClient;
 import net.argus.emessage.client.gui.GUIClient;
-import net.argus.emessage.pack.EMessagePackagePrefab;
 import net.argus.emessage.pack.EMessagePackageType;
 import net.argus.event.gui.frame.FrameEvent;
 import net.argus.event.gui.frame.FrameListener;
@@ -29,7 +28,6 @@ import net.argus.instance.Program;
 import net.argus.lang.Lang;
 import net.argus.lang.LangRegister;
 import net.argus.net.client.Client;
-import net.argus.net.pack.PackagePrefab;
 import net.argus.plugin.InitializationPlugin;
 import net.argus.plugin.PluginEvent;
 import net.argus.plugin.PluginRegister;
@@ -95,7 +93,7 @@ public class MainClient extends CardinalProgram {
 	}
 	
 	public static ActionListener getLeaveActionListener() {
-		return (ActionEvent e) -> {Instance.setThreadInstance(instanceClient); client.logOut();};
+		return (ActionEvent e) -> {Instance.setThreadInstance(instanceClient); client.logOut("leave");};
 	}
 	
 	public static ActionListener getPreferenceActionListener() {
@@ -123,9 +121,9 @@ public class MainClient extends CardinalProgram {
 				if(client != null && client.isConnected() && ArrayManager.isExist(msg.toCharArray(), 0)) {
 					boolean com = msg.toCharArray()[0] == '/';
 					if(com)
-						client.send(PackagePrefab.genCommandPackage(msg));
+						client.send(msg);
 					else
-						client.send(EMessagePackagePrefab.genMessagePackage(msg));
+						client.send(msg);
 					
 					event.startEvent(EventChat.SEND_MESSAGE, new ChatEvent(msg, null));
 					
@@ -135,6 +133,7 @@ public class MainClient extends CardinalProgram {
 					field.copyData();
 					field.setText("");
 				}
+				
 				
 			}
 		};
@@ -148,9 +147,9 @@ public class MainClient extends CardinalProgram {
 			@Override
 			public void frameClosing(FrameEvent e) {
 				if(client != null && client.isConnected()) {
-					client.send(PackagePrefab.genLogOutPackage("Frame Closing"));
+					client.logOut("Frame Closing");
 					
-					client.getClientProcess().close();
+					//client.getClientProcess().close();
 				}
 			}	
 			public void frameMinimalized(FrameEvent e) {}
@@ -233,21 +232,25 @@ public class MainClient extends CardinalProgram {
 	
 	/**----**/
 	public static void connect(String host, String pseudo, String password) {
-		client = new EMessageClient(host, ClientResources.CONFIG.getInt("port"), pseudo);
+		try {
+			client = new EMessageClient(host, ClientResources.CONFIG.getInt("port"));
+		} catch (IOException e1) {
+			e1.printStackTrace();
+		}
 		
-		client.addSocketListener(getSocketListener());
+		/*client.addSocketListener(getSocketListener());
 		client.addProcessListener(new EMessageClientProcess());
-
-		try {client.connect(password);}
+*/
+		try {client.connect(pseudo, password);}
 		catch(IOException e) {}
 	}
 	
-	public static void joinRoom(String roomName, String password) {
+	public static void joinRoom(String roomName, String password) throws IOException {
 		String command = "/joinroom \"" + roomName + "\"";
 		if(password != null)
 			command += " \"" + password + "\"";
 		
-		client.send(PackagePrefab.genCommandPackage(command));
+		client.send(command);
 	}
 	
 	public static void stop() {UserSystem.exit(0);}

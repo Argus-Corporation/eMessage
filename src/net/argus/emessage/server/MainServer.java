@@ -2,8 +2,10 @@ package net.argus.emessage.server;
 
 import java.io.IOException;
 
+import net.argus.beta.net.ctp.CtpServer;
 import net.argus.emessage.EMessage;
 import net.argus.emessage.EMessageProperty;
+import net.argus.emessage.api.server.CemServer;
 import net.argus.emessage.pack.EMessagePackagePrefab;
 import net.argus.emessage.pack.EMessagePackageType;
 import net.argus.emessage.proxy.MainProxy;
@@ -13,18 +15,13 @@ import net.argus.event.net.server.ServerListener;
 import net.argus.exception.InstanceException;
 import net.argus.instance.CardinalProgram;
 import net.argus.instance.Program;
-import net.argus.monitoring.event.MonitoringEvent;
-import net.argus.monitoring.event.MonitoringListener;
 import net.argus.monitoring.server.MonitorWhiteList;
-import net.argus.monitoring.server.MonitoringClient;
 import net.argus.monitoring.server.MonitoringServer;
-import net.argus.net.server.Server;
 import net.argus.net.server.ServerProcess;
 import net.argus.net.server.ServerProcessEvent;
 import net.argus.net.server.role.Role;
 import net.argus.net.server.room.Room;
 import net.argus.net.server.room.RoomRegister;
-import net.argus.net.socket.CryptoSocket;
 import net.argus.plugin.InitializationPlugin;
 import net.argus.plugin.PluginEvent;
 import net.argus.plugin.PluginRegister;
@@ -32,6 +29,7 @@ import net.argus.system.InitializationSystem;
 import net.argus.system.Network;
 import net.argus.system.UserSystem;
 import net.argus.util.Error;
+import net.argus.util.Version;
 import net.argus.util.debug.Debug;
 import net.argus.util.debug.Info;
 
@@ -40,10 +38,12 @@ public class MainServer extends CardinalProgram {
 		
 	private static MonitoringServer monitoring;
 	
-	private static Server serv;
+	private static CemServer serv;
 	
 	private static int port = EMessageProperty.getInt("DefaultPort"); 
 	private static int size = EMessageProperty.getInt("DefaultMainRoomSize");
+	
+	public static final Version SERVER_VERSION = new Version("2b");
 	
 	private static String password;
 	
@@ -64,23 +64,27 @@ public class MainServer extends CardinalProgram {
 		
 		try {
 			monitoring = new MonitoringServer(8495);
-			monitoring.addMonitoringListener(getMonitoringListener());
+			//monitoring.addMonitoringListener(getMonitoringListener());
 			monitoring.open();
 		}catch(IOException e) {Debug.log("Error: port 8495 for the monitoring server is not available", Info.ERROR);}
 		
 		whitelistMonitor();
 		
-		serv = new Server(size, port);
-		serv.addServerListener(getServerListener());
-		
-		ServerProcessEvent.addProcessListener(new EMessageServerProcess());
-		
-		PluginRegister.init(new PluginEvent(MainServer.class));
-		
-		if(password != null && !password.equals(""))
-			new Role("administrator", password, 10);
-		
-		serv.open(new CryptoSocket(true));
+		try {
+			serv = new CemServer(port, SERVER_VERSION);
+			//serv.addServerListener(getServerListener());
+			
+			ServerProcessEvent.addProcessListener(new EMessageServerProcess());
+			
+			PluginRegister.init(new PluginEvent(MainServer.class));
+			
+			if(password != null && !password.equals(""))
+				new Role("administrator", password, 10);
+			
+			serv.open();
+		}catch(IOException e) {
+			Debug.log("Error: server cannot start", Info.ERROR);
+		}
 				
 		PluginRegister.postInit(new PluginEvent(MainServer.class));
 	}
@@ -172,7 +176,7 @@ public class MainServer extends CardinalProgram {
 		};
 	}
 	
-	private static MonitoringListener getMonitoringListener() {
+	/*private static MonitoringListener getMonitoringListener() {
 		return new MonitoringListener() {
 			@Override
 			public void newMonitor(MonitoringEvent e) {
@@ -182,11 +186,11 @@ public class MainServer extends CardinalProgram {
 				}catch(IOException e1) {e1.printStackTrace();}
 			}
 		};
-	}
+	}*/
 	
-	public static void addServerListener(ServerListener listener) {serv.addServerListener(listener);}
+	//public static void addServerListener(ServerListener listener) {serv.addServerListener(listener);}
 	
-	public static Server getServer() {return serv;}
+	public static CtpServer getServer() {return serv;}
 		
 	public static void stop() {UserSystem.exit(0);}
 	

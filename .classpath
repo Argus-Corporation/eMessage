@@ -6,5 +6,7 @@
 	<classpathentry kind="lib" path="lib/Cardinal-System.jar" sourcepath="D:/Django/Documents/Java/Cardinal/Cardinal-System/src"/>
 	<classpathentry kind="lib" path="lib/Launcher.jar"/>
 	<classpathentry kind="lib" path="lib/Monitoring.jar"/>
+	<classpathentry kind="lib" path="lib/eMessageAPI.jar"/>
+	<classpathentry kind="lib" path="lib/eMessageUI.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
