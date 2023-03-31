@@ -4,19 +4,25 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.IOException;
+import java.security.NoSuchAlgorithmException;
+import java.security.spec.InvalidKeySpecException;
 
+import net.argus.beta.com.pack.Package;
 import net.argus.emessage.EMessage;
+import net.argus.emessage.api.client.EMessageClient;
+import net.argus.emessage.api.event.ClientEvent;
+import net.argus.emessage.api.event.ClientListener;
+import net.argus.emessage.api.pack.PackageType;
 import net.argus.emessage.client.event.ChatEvent;
 import net.argus.emessage.client.event.ChatListener;
 import net.argus.emessage.client.event.EventChat;
 import net.argus.emessage.client.gui.Connect;
 import net.argus.emessage.client.gui.EMessagePanelClient;
 import net.argus.emessage.client.gui.GUIClient;
+import net.argus.emessage.client.gui.InfoDialog;
 import net.argus.emessage.pack.EMessagePackageType;
 import net.argus.event.gui.frame.FrameEvent;
 import net.argus.event.gui.frame.FrameListener;
-import net.argus.event.net.socket.SocketEvent;
-import net.argus.event.net.socket.SocketListener;
 import net.argus.exception.InstanceException;
 import net.argus.file.FileManager;
 import net.argus.file.css.CSSEngine;
@@ -121,9 +127,9 @@ public class MainClient extends CardinalProgram {
 				if(client != null && client.isConnected() && ArrayManager.isExist(msg.toCharArray(), 0)) {
 					boolean com = msg.toCharArray()[0] == '/';
 					if(com)
-						client.send(msg);
+						client.sendCommand(msg);
 					else
-						client.send(msg);
+						client.sendMessage(msg);
 					
 					event.startEvent(EventChat.SEND_MESSAGE, new ChatEvent(msg, null));
 					
@@ -156,27 +162,56 @@ public class MainClient extends CardinalProgram {
 		};
 	}
 	
-	public static SocketListener getSocketListener() {
-		return new SocketListener() {
+	public static ClientListener getClientListener() {
+		return new ClientListener() {
+
+			
+			@Override
+			public void refuse(ClientEvent e) {
+				GUIClient.leave();
+				event.startEvent(EventChat.DISCONNECT, new ChatEvent(e.getArgument(), true));
+			}
 
 			@Override
-			public void connect(SocketEvent e) {
+			public void connect(ClientEvent e) {
 				event.startEvent(EventChat.CONNECT, new ChatEvent(e.getArgument(), null));
-				
 				GUIClient.connect();
 			}
 
 			@Override
-			public void disconnect(SocketEvent e) {
+			public void disconnect(ClientEvent e) {
 				GUIClient.leave();
-				
 				event.startEvent(EventChat.DISCONNECT, new ChatEvent(e.getArgument(), null));
 			}
 
 			@Override
-			public void connectionRefused(SocketEvent e) {
-				GUIClient.leave();
-				event.startEvent(EventChat.DISCONNECT, new ChatEvent(e.getArgument(), true));
+			public void newPackage(ClientEvent e) {
+				Package pack = e.getPackage();
+
+				event.startEvent(EventChat.RECEIVE_MESSAGE, new ChatEvent(pack));
+				if(getType(pack).equals(PackageType.MESSAGE)) {
+					GUIClient.addMessage(pack.getInt("position"), pack.getString("user_name"), pack.getString("message"));
+					
+				}else if(getType(pack).equals(PackageType.INFO)) {
+					InfoDialog info = new InfoDialog();
+					info.addInfo(pack);
+					info.setVisible(true);
+					
+				}else if(getType(pack).equals(PackageType.SYSTEM)) {
+					GUIClient.addSystemMessage(pack.getString("message"));
+					
+				/*}else if(pack.getType().equals(EMessagePackageType.ROOM)) {
+					Room room = new Room(pack.getValue("Room-Name"), Boolean.valueOf(pack.getValue("Room-Private")));
+					RoomRegister.addRoom(room);
+					
+				}else if(pack.getType().equals(EMessagePackageType.ROOM_REMOVE)) {
+					RoomRegister.removeRoom(pack.getValue("Room-Name"));
+					*/
+				}
+			}
+			
+			public PackageType getType(Package pack) {
+				return PackageType.getPackageType(pack.getInt("type"));
 			}
 		};
 	}
@@ -238,11 +273,11 @@ public class MainClient extends CardinalProgram {
 			e1.printStackTrace();
 		}
 		
-		/*client.addSocketListener(getSocketListener());
-		client.addProcessListener(new EMessageClientProcess());
+		client.addClientListener(getClientListener());
+		/*client.addProcessListener(new EMessageClientProcess());
 */
 		try {client.connect(pseudo, password);}
-		catch(IOException e) {}
+		catch(IOException | NoSuchAlgorithmException | InvalidKeySpecException e) {}
 	}
 	
 	public static void joinRoom(String roomName, String password) throws IOException {
@@ -250,7 +285,7 @@ public class MainClient extends CardinalProgram {
 		if(password != null)
 			command += " \"" + password + "\"";
 		
-		client.send(command);
+		client.sendCommand(command);
 	}
 	
 	public static void stop() {UserSystem.exit(0);}

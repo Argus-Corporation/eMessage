@@ -1,6 +1,6 @@
 package net.argus.emessage.client.event;
 
-import net.argus.net.pack.Package;
+import net.argus.beta.com.pack.Package;
 
 public class ChatEvent {
 	

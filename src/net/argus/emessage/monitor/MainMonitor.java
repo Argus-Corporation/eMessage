@@ -46,7 +46,7 @@ public class MainMonitor extends CardinalProgram {
 		
 		try {
 			if(serv != null && !serv.equals(""))
-					address = InetAddress.getByName(serv);
+				address = InetAddress.getByName(serv);
 			else
 				address = InetAddress.getByName("localhost");
 		}catch(UnknownHostException e) {e.printStackTrace(); Error.createErrorFileLog(e);}

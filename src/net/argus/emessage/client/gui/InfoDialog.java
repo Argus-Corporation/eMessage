@@ -9,11 +9,14 @@ import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 
+import net.argus.beta.com.pack.Package;
+import net.argus.cjson.Array;
+import net.argus.cjson.value.CJSONValue;
+import net.argus.emessage.api.pack.PackagePrefab;
+import net.argus.emessage.api.pack.PackageType;
 import net.argus.gui.Button;
 import net.argus.gui.Label;
 import net.argus.gui.Panel;
-import net.argus.net.pack.Package;
-import net.argus.net.pack.PackageType;
 import net.argus.util.debug.Debug;
 import net.argus.util.debug.Info;
 
@@ -52,31 +55,40 @@ public class InfoDialog extends JDialog {
 	}
 	
 	public void addInfo(Package packageInfo) {
-		if(packageInfo.getType() != PackageType.INFO) {
+		if(PackageType.getPackageType(packageInfo) != PackageType.INFO) {
 			Debug.log("Error: this package was not an info package", Info.ERROR);
 			return;
 		}
 		
-		Object[] objs = packageInfo.getArray("Infos");
-		
-		if(objs != null)
-			setObjects(objs);
+		if(packageInfo.getInt("style") == PackagePrefab.SINGLE_LINE) {
+			set(new String[] {packageInfo.getString("infos")});
+		}else {
+			Array array = packageInfo.getArray("infos");
+			String[] values = new String[array.length()];
+			
+			int i = 0;
+			for(CJSONValue v : array.getArray()) {
+				values[i] = v.getValue("name").getValue() + ": " + v.getValue("value").getValue();
+				i++;
+			}
+			set(values);
+		}
 	}
 	
-	public void setObjects(Object[] objs) {
+	public void set(String[] values) {
 		Panel pan = new Panel();
-		pan.setBorder(BorderFactory.createTitledBorder("Info"));
+		pan.setBorder(BorderFactory.createTitledBorder("Infos"));
 		pan.setLayout(new BoxLayout(pan, BoxLayout.Y_AXIS));
 		
-		for(Object obj : objs)
-			if(obj != null)
-				addObject(obj, pan);
+		for(String str : values)
+			if(str != null)
+				addObject(str, pan);
 		
 		add(BorderLayout.CENTER, pan);
 	}
 	
-	private void addObject(Object obj, JComponent comp) {
-		comp.add(new Label(obj.toString(), false));
+	private void addObject(String message, JComponent comp) {
+		comp.add(new Label(message.toString(), false));
 	}
 	
 	@Override

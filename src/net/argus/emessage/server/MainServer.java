@@ -2,10 +2,14 @@ package net.argus.emessage.server;
 
 import java.io.IOException;
 
-import net.argus.beta.net.ctp.CtpServer;
+import net.argus.beta.com.CardinalSocket;
+import net.argus.beta.com.CardinalSocketFactory;
+import net.argus.crypto.CryptoAES;
+import net.argus.crypto.CryptoRSA;
 import net.argus.emessage.EMessage;
 import net.argus.emessage.EMessageProperty;
-import net.argus.emessage.api.server.CemServer;
+import net.argus.emessage.api.server.EMessageServer;
+import net.argus.emessage.api.server.sys.SystemSocket;
 import net.argus.emessage.pack.EMessagePackagePrefab;
 import net.argus.emessage.pack.EMessagePackageType;
 import net.argus.emessage.proxy.MainProxy;
@@ -15,7 +19,10 @@ import net.argus.event.net.server.ServerListener;
 import net.argus.exception.InstanceException;
 import net.argus.instance.CardinalProgram;
 import net.argus.instance.Program;
+import net.argus.monitoring.event.MonitoringEvent;
+import net.argus.monitoring.event.MonitoringListener;
 import net.argus.monitoring.server.MonitorWhiteList;
+import net.argus.monitoring.server.MonitoringClient;
 import net.argus.monitoring.server.MonitoringServer;
 import net.argus.net.server.ServerProcess;
 import net.argus.net.server.ServerProcessEvent;
@@ -38,7 +45,7 @@ public class MainServer extends CardinalProgram {
 		
 	private static MonitoringServer monitoring;
 	
-	private static CemServer serv;
+	private static EMessageServer serv;
 	
 	private static int port = EMessageProperty.getInt("DefaultPort"); 
 	private static int size = EMessageProperty.getInt("DefaultMainRoomSize");
@@ -64,14 +71,14 @@ public class MainServer extends CardinalProgram {
 		
 		try {
 			monitoring = new MonitoringServer(8495);
-			//monitoring.addMonitoringListener(getMonitoringListener());
+			monitoring.addMonitoringListener(getMonitoringListener());
 			monitoring.open();
 		}catch(IOException e) {Debug.log("Error: port 8495 for the monitoring server is not available", Info.ERROR);}
 		
 		whitelistMonitor();
 		
 		try {
-			serv = new CemServer(port, SERVER_VERSION);
+			serv = new EMessageServer(port);
 			//serv.addServerListener(getServerListener());
 			
 			ServerProcessEvent.addProcessListener(new EMessageServerProcess());
@@ -176,21 +183,25 @@ public class MainServer extends CardinalProgram {
 		};
 	}
 	
-	/*private static MonitoringListener getMonitoringListener() {
+	private static MonitoringListener getMonitoringListener() {
 		return new MonitoringListener() {
 			@Override
 			public void newMonitor(MonitoringEvent e) {
 				try {
 					MonitoringClient client = e.getMonitoringClient();
-					serv.setMonitoring(client.getInputStream(), client.getPrintStream());
+					CryptoRSA rsa = new CryptoRSA();
+					CardinalSocket carSoc = CardinalSocketFactory.createServerConnection(client.getSocket(), rsa);
+					
+					serv.addMonitor(new SystemSocket(carSoc.getStream(), ));
+					//serv.addMonitor(client.getInputStream(), client.getPrintStream());
 				}catch(IOException e1) {e1.printStackTrace();}
 			}
 		};
-	}*/
+	}
 	
 	//public static void addServerListener(ServerListener listener) {serv.addServerListener(listener);}
 	
-	public static CtpServer getServer() {return serv;}
+	public static EMessageServer getServer() {return serv;}
 		
 	public static void stop() {UserSystem.exit(0);}
 	

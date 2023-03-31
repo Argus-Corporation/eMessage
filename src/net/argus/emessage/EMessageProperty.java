@@ -13,7 +13,7 @@ public class EMessageProperty {
 	
 	static {
 		put("DefaultPort", 11066);
-		put("AlternativePort", 8375);
+		put("AlternativePort", 8303);
 		put("DefaultDebugPort", 11036);
 		put("DefaultMainRoomSize", 100);
 		put("DefaultSystemName", "System");

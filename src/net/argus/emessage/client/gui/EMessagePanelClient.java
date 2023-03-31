@@ -17,6 +17,7 @@ import net.argus.event.gui.frame.FrameListener;
 import net.argus.gui.Button;
 import net.argus.gui.Panel;
 import net.argus.gui.TextField;
+import net.argus.emessage.api.MessagePosition;
 import net.argus.emessage.api.ui.bubble.BubbleScrollPane;
 import net.argus.emessage.api.ui.bubble.Type;
 
@@ -24,6 +25,7 @@ public class EMessagePanelClient {
 	
 	public static final int ME = Type.USER;
 	public static final int YOU = Type.FRIEND;
+	public static final int CENTER = Type.CENTER;
 	
 	private BubbleScrollPane discussion;
 	private TextField msg;
@@ -86,6 +88,19 @@ public class EMessagePanelClient {
 			message += mes + "\n";
 		
 		addMessage(pos, pseudo, message);
+	}
+	
+	public int translatePosition(int pos) {
+		if(pos == MessagePosition.ME.getPosition() || pos == ME)
+			return ME;
+		
+		else if(pos == MessagePosition.FRIEND.getPosition() || pos == YOU)
+			return YOU;
+		
+		else if(pos == MessagePosition.CENTER.getPosition() || pos == CENTER)
+			return CENTER;
+		
+		return YOU;
 	}
 	
 	public void clearMessage() {discussion.clear();}
