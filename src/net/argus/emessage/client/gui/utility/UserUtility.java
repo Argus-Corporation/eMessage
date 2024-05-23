@@ -36,7 +36,7 @@ public class UserUtility extends DialogComponent {
 		setAlwaysOnTop(true);
 		
 		setIcon(ClientResources.ICON.getImage());
-		setDialogIcon(ClientResources.ICON.getImage());
+	//	setDialogIcon(ClientResources.ICON.getImage());
 		
 		addTab(ROOM_TAB);
 	}

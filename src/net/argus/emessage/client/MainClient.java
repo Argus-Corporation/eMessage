@@ -5,6 +5,7 @@ import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.IOException;
 
+import net.argus.Cardinal;
 import net.argus.emessage.EMessage;
 import net.argus.emessage.client.event.ChatEvent;
 import net.argus.emessage.client.event.ChatListener;
@@ -252,6 +253,12 @@ public class MainClient extends CardinalProgram {
 	public static void stop() {UserSystem.exit(0);}
 	
 	public void main(String[] args) throws InstanceException {
+		String name = UserSystem.getProperty("name");
+
+		UserSystem.setProperty("apple.awt.application.appearance", "system");
+		UserSystem.setProperty("apple.laf.useScreenMenuBar", "true");
+
+		UserSystem.defineProperty("apple.awt.application.name", (name==null||name.isEmpty())?Cardinal.NAME:name);
 		try {
 			InitializationSystem.initSystem(args, true, new InitializationSplash("res/logo.png", Display.getWidth() - 50, 0));
 			InitializationPlugin.register();

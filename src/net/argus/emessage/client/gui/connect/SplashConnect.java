@@ -42,7 +42,7 @@ public class SplashConnect extends DialogComponent {
 		addFocusListener(getFocusListener());
 		
 		setIcon(ClientResources.ICON.getImage());
-		setDialogIcon(ClientResources.ICON.getImage());
+		//setDialogIcon(ClientResources.ICON.getImage());
 		
 		getDialog().setDefaultCloseOperation(JDialog.DO_NOTHING_ON_CLOSE);
 		setAlwaysOnTop(true);

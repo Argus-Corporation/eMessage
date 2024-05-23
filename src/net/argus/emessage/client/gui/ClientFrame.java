@@ -2,12 +2,13 @@ package net.argus.emessage.client.gui;
 
 import java.awt.BorderLayout;
 
+import javax.swing.JFrame;
+
 import net.argus.emessage.EMessage;
 import net.argus.emessage.client.ClientResources;
-import net.argus.gui.animation.FrameAnimation;
-import net.argus.gui.frame.Frame;
+import net.argus.gui.CFrame;
 
-public class ClientFrame extends Frame {
+public class ClientFrame extends CFrame {
 
 	/**
 	 * 
@@ -16,16 +17,17 @@ public class ClientFrame extends Frame {
 		
 	public ClientFrame() {
 		super(EMessage.NAME);
-		setDefaultCloseOperation(Frame.EXIT_ON_CLOSE);		
+		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);		
 		
-		setContentPaneLayout(new BorderLayout());
+		getContentPane().setLayout(new BorderLayout());
 		setSize(700, 700);
 		setLocationRelativeTo(null);
 		
 		setIconImage(ClientResources.ICON.getImage());
-		setFrameIconImage(ClientResources.ICON);
 		
-		setFrameAnimation(new FrameAnimation(this));
+		//setFrameIconImage(ClientResources.ICON);
+		
+		//setFrameAnimation(new FrameAnimation(this));
 	}
 
 }

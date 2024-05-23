@@ -41,7 +41,7 @@ public class AboutDialog extends DialogComponent implements GUI {
 		LangRegister.addElementLanguage(this);
 		
 		setIcon(ClientResources.ICON.getImage());
-		setDialogIcon(ClientResources.ICON.getImage());
+		//setDialogIcon(ClientResources.ICON.getImage());
 		
 		setAlwaysOnTop(true);
 		

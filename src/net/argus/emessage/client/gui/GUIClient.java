@@ -1,6 +1,7 @@
 package net.argus.emessage.client.gui;
 
 import java.awt.BorderLayout;
+import java.awt.Desktop;
 import java.awt.event.ActionListener;
 import java.io.IOException;
 
@@ -28,8 +29,15 @@ public class GUIClient {
 	public static final UserUtility UTILITY = new UserUtility();
 	
 	public static void init() {
+		Desktop desktop = Desktop.getDesktop();
+		
+		if(desktop.isSupported( Desktop.Action.APP_ABOUT)) {
+		    desktop.setAboutHandler( e -> {
+		       ABOUT.show();
+		    });
+		}
 		try {
-			FRAME.add(BorderLayout.NORTH, MENU_BAR.getMenuBar());
+			FRAME.setJMenuBar(MENU_BAR.getMenuBar());
 			FRAME.add(BorderLayout.CENTER, CHAT_PANEL.getChatPanel());
 		}catch(IOException e) {}
 		
@@ -72,7 +80,9 @@ public class GUIClient {
 	
 	public static void clearMessage() {CHAT_PANEL.clearMessage();}
 		
-	public static void addFrameListener(FrameListener listener) {FRAME.addFrameListener(listener);}
+	public static void addFrameListener(FrameListener listener) {
+		//FRAME.addFrameListener(listener);
+		}
 	
 	public static void addFastAction(ActionListener actionListener) {MENU_BAR.getFast().addActionListener(actionListener);}
 	public static void addJoinAction(ActionListener actionListener) {MENU_BAR.getJoin().addActionListener(actionListener);}
